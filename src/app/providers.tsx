@@ -1,4 +1,6 @@
 "use client";
+import { AuthProvider } from "@/contexts/auth.context";
+import { JobProvider } from "@/contexts/jobs.context";
 import { NextUIProvider } from "@nextui-org/react";
 
 interface ProvidersProps {
@@ -7,6 +9,10 @@ interface ProvidersProps {
 
 export default function Providers({ children }: ProvidersProps) {
   return (
-      <NextUIProvider>{children}</NextUIProvider>
+    <AuthProvider>
+      <JobProvider>
+        <NextUIProvider>{children}</NextUIProvider>
+      </JobProvider>
+    </AuthProvider>
   );
 }
