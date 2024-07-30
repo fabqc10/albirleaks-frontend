@@ -50,9 +50,11 @@ export const JobProvider = ({ children }: JobProviderProps) => {
   const [userJobs, setUserJobs] = useState<Job[]>([]);
   const [error, setError] = useState<string | null>(null);
 
+  console.log(jobs);
+
   const getJobs = useCallback(async () => {
     try {
-      const response = await fetch("/jobs");
+      const response = await fetch("http://localhost:8080/jobs");
       const fetchedJobs = await response.json();
       setJobs(fetchedJobs);
       setError(null);

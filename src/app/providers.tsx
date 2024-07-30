@@ -2,6 +2,7 @@
 import { AuthProvider } from "@/contexts/auth.context";
 import { JobProvider } from "@/contexts/jobs.context";
 import { NextUIProvider } from "@nextui-org/react";
+import SessionWrapper from "./SessionWrapper";
 
 interface ProvidersProps {
   children: React.ReactNode;
@@ -9,10 +10,12 @@ interface ProvidersProps {
 
 export default function Providers({ children }: ProvidersProps) {
   return (
-    <AuthProvider>
-      <JobProvider>
-        <NextUIProvider>{children}</NextUIProvider>
-      </JobProvider>
-    </AuthProvider>
+    <SessionWrapper>
+      <AuthProvider>
+        <JobProvider>
+          <NextUIProvider>{children}</NextUIProvider>
+        </JobProvider>
+      </AuthProvider>
+    </SessionWrapper>
   );
 }
