@@ -1,9 +1,14 @@
-import React from 'react'
+"use client";
 
-const page = () => {
-  return (
-    <div>Jobs</div>
-  )
-}
+import { JobsContext } from "@/app/contexts/jobs.context";
+import { useContext } from "react";
 
-export default page
+const Page = () => {
+const {jobs} = useContext(JobsContext);
+  return <div>
+    {jobs.map((job) => (
+        <div>{job.jobTitle}</div>
+    ))}
+  </div>;
+};
+export default Page;

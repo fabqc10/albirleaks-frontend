@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Roboto_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import Header from "@/components/header";
+import Header from "@/app/components/header";
+import { JobsProvider } from "@/app/contexts/jobs.context";
 
 const roboto_mono = Roboto_Mono({
   weight: "400",
