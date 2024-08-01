@@ -2,12 +2,13 @@
 
 import { JobsContext } from "@/app/contexts/jobs.context";
 import { useContext } from "react";
+import JobCard from "../components/jobCard";
 
 const Page = () => {
 const {jobs} = useContext(JobsContext);
   return <div>
     {jobs.map((job) => (
-        <div>{job.jobTitle}</div>
+        <JobCard job={job}/>
     ))}
   </div>;
 };
