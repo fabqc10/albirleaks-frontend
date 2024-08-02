@@ -90,7 +90,7 @@ export const JobsContext = createContext<JobsContextType>({
 });
 
 export const JobsProvider = ({ children }: JobProviderProps) => {
-  const [jobs, setJobs] = useState<Job[]>(jobsArray);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [userJobs, setUserJobs] = useState<Job[]>([]);
   const [error, setError] = useState<string | null>(null);
 
