@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, ReactNode } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Session } from "next-auth";

@@ -7,6 +7,13 @@ const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      authorization: {
+        params: {
+          scope: "openid email profile",
+          // Ensure this matches your base URL
+          redirect_uri: `${process.env.NEXTAUTH_URL}/api/auth/callback/google`,
+        },
+      },
     }),
   ],
   callbacks: {
@@ -21,6 +28,7 @@ const authOptions: NextAuthOptions = {
       return session;
     },
   },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 // This is the correct way to export NextAuth options with Next.js API routes

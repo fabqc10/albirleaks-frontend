@@ -1,46 +1,59 @@
+"use client";
+
 import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
 import Link from 'next/link';
-import React from 'react'
+import React from 'react';
 import AlbirLogo from './albirlogo';
 import paths from '@/paths';
+import { useAuth } from '@/app/contexts/auth.context';
 
 const Header = () => {
+  const { user, loading, login, logout } = useAuth();
+
   return (
-   <Navbar shouldHideOnScroll className="shadow mb-6 m-0">
-    <NavbarBrand>
-        <Link href={"/"}>
-            <AlbirLogo />
+    <Navbar shouldHideOnScroll className="shadow mb-6 m-0">
+      <NavbarBrand>
+        <Link href="/">
+          <AlbirLogo />
         </Link>
-    </NavbarBrand>
-    <NavbarContent justify='center' className="hidden sm:flex gap-4">
+      </NavbarBrand>
+      <NavbarContent justify='center' className="hidden sm:flex gap-4">
         <NavbarItem>
-            <Link href={paths.home()}>
-                HOME
-            </Link>
+          <Link href={paths.home()}>HOME</Link>
         </NavbarItem>
         <NavbarItem>
-            <Link href={paths.about()}>
-                ABOUT
-            </Link>
+          <Link href={paths.about()}>ABOUT</Link>
         </NavbarItem>
         <NavbarItem>
-            <Link href={paths.jobs()}>
-                JOBS
-            </Link>
-        </NavbarItem>
-    </NavbarContent>
-    <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Sign Up
-          </Button>
+          <Link href={paths.jobs()}>JOBS</Link>
         </NavbarItem>
       </NavbarContent>
-   </Navbar>
-  )
-}
+      <NavbarContent justify="end">
+        {!loading && (
+          <>
+            {user ? (
+              <>
+                <NavbarItem className="hidden lg:flex">
+                  <Button onClick={logout} color="primary" variant="flat">
+                    Logout
+                  </Button>
+                </NavbarItem>
+                <NavbarItem>
+                  <span>Welcome, {user.name}</span>
+                </NavbarItem>
+              </>
+            ) : (
+              <NavbarItem className="hidden lg:flex">
+                <Button onClick={login} color="primary" variant="flat">
+                  Login
+                </Button>
+              </NavbarItem>
+            )}
+          </>
+        )}
+      </NavbarContent>
+    </Navbar>
+  );
+};
 
 export default Header;
