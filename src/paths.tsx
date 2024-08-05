@@ -8,6 +8,9 @@ const paths = {
   about() {
     return "/about";
   },
+  myjobs() {
+    return "/myjobs";
+  },
 };
 
 export default paths;

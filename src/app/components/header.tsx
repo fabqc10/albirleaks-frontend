@@ -27,6 +27,9 @@ const Header = () => {
         <NavbarItem>
           <Link href={paths.jobs()}>JOBS</Link>
         </NavbarItem>
+        {!loading && user && <NavbarItem>
+          <Link href={paths.myjobs()}>MY JOBS</Link>
+        </NavbarItem>}
       </NavbarContent>
       <NavbarContent justify="end">
         {!loading && (
