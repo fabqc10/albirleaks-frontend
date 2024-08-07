@@ -22,7 +22,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   console.log("SESSION: ", session);
 
   const login = () => signIn("google");
-  const logout = () => signOut();
+  const logout = () => {
+    signOut();
+    sessionStorage.clear();
+    localStorage.clear();
+  };
 
   const value = {
     user: session?.user ?? null,
