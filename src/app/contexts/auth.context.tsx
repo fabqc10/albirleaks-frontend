@@ -19,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
+  console.log("SESSION: ", session);
 
   const login = () => signIn("google");
   const logout = () => signOut();

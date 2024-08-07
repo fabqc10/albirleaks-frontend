@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useAuth } from "./auth.context";
 
 // Define the Job type
 type Job = {
@@ -28,55 +29,58 @@ type JobsContextType = {
   userJobs: Job[];
   error: string | null;
   getJobs: () => void;
-  getUserJobs: (userId: string) => void;
+  getUserJobs: () => void;
   addJob: (job: Job) => void;
   updateJob: (jobId: string, updatedJob: Job) => void;
   deleteJob: (jobId: string) => void;
 };
 
 const jobsArray: Job[] = [
-    {
-      jobId: "1",
-      jobTitle: "Software Engineer",
-      jobDescription: "Develop and maintain web applications using modern JavaScript frameworks.",
-      location: "San Francisco, CA",
-      companyName: "Tech Corp",
-      createdAt: "2024-01-01T10:00:00Z"
-    },
-    {
-      jobId: "2",
-      jobTitle: "Product Manager",
-      jobDescription: "Lead product development teams and define product strategy.",
-      location: "New York, NY",
-      companyName: "Innovate Inc.",
-      createdAt: "2024-02-15T09:30:00Z"
-    },
-    {
-      jobId: "3",
-      jobTitle: "Data Scientist",
-      jobDescription: "Analyze complex data sets to derive actionable insights.",
-      location: "Boston, MA",
-      companyName: "DataWorks",
-      createdAt: "2024-03-10T12:15:00Z"
-    },
-    {
-      jobId: "4",
-      jobTitle: "UX Designer",
-      jobDescription: "Design user interfaces and improve user experience for our products.",
-      location: "Seattle, WA",
-      companyName: "DesignHub",
-      createdAt: "2024-04-05T08:45:00Z"
-    },
-    {
-      jobId: "5",
-      jobTitle: "Marketing Specialist",
-      jobDescription: "Create and execute marketing campaigns to promote our services.",
-      location: "Chicago, IL",
-      companyName: "MarketMasters",
-      createdAt: "2024-05-20T14:00:00Z"
-    }
-  ];
-  
+  {
+    jobId: "1",
+    jobTitle: "Software Engineer",
+    jobDescription:
+      "Develop and maintain web applications using modern JavaScript frameworks.",
+    location: "San Francisco, CA",
+    companyName: "Tech Corp",
+    createdAt: "2024-01-01T10:00:00Z",
+  },
+  {
+    jobId: "2",
+    jobTitle: "Product Manager",
+    jobDescription:
+      "Lead product development teams and define product strategy.",
+    location: "New York, NY",
+    companyName: "Innovate Inc.",
+    createdAt: "2024-02-15T09:30:00Z",
+  },
+  {
+    jobId: "3",
+    jobTitle: "Data Scientist",
+    jobDescription: "Analyze complex data sets to derive actionable insights.",
+    location: "Boston, MA",
+    companyName: "DataWorks",
+    createdAt: "2024-03-10T12:15:00Z",
+  },
+  {
+    jobId: "4",
+    jobTitle: "UX Designer",
+    jobDescription:
+      "Design user interfaces and improve user experience for our products.",
+    location: "Seattle, WA",
+    companyName: "DesignHub",
+    createdAt: "2024-04-05T08:45:00Z",
+  },
+  {
+    jobId: "5",
+    jobTitle: "Marketing Specialist",
+    jobDescription:
+      "Create and execute marketing campaigns to promote our services.",
+    location: "Chicago, IL",
+    companyName: "MarketMasters",
+    createdAt: "2024-05-20T14:00:00Z",
+  },
+];
 
 export const JobsContext = createContext<JobsContextType>({
   jobs: [],
@@ -90,11 +94,14 @@ export const JobsContext = createContext<JobsContextType>({
 });
 
 export const JobsProvider = ({ children }: JobProviderProps) => {
+  const { user, loading } = useAuth();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [userJobs, setUserJobs] = useState<Job[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   console.log(jobs);
+  console.log("USER JOBS: " + userJobs);
+  console.log("USER" + user?.id);
 
   const getJobs = useCallback(async () => {
     try {
@@ -107,16 +114,26 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     }
   }, []);
 
-  const getUserJobs = useCallback(async (userId: string) => {
-    try {
-      const response = await fetch(`/api/users/${userId}/jobs`);
-      const fetchedUserJobs = await response.json();
-      setUserJobs(fetchedUserJobs);
-      setError(null);
-    } catch (error) {
-      setError("Error fetching user jobs. Please try again.");
+  const getUserJobs = useCallback(async () => {
+    if (user && user.id) {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/jobs/user/${user.id}`,
+          {
+            credentials: "include",
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        const fetchedUserJobs = await response.json();
+        setUserJobs(fetchedUserJobs);
+        setError(null);
+      } catch (error) {
+        setError("Error fetching user jobs. Please try again.");
+      }
     }
-  }, []);
+  }, [user]);
 
   const addJob = async (job: Job) => {
     try {
@@ -167,6 +184,12 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     getJobs();
   }, [getJobs]);
 
+  useEffect(() => {
+    if (!loading && user && user.id) {
+      getUserJobs(); // No argument needed
+    }
+  }, [loading, user, getUserJobs]);
+
   const value: JobsContextType = {
     jobs,
     userJobs,
@@ -178,7 +201,5 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     deleteJob,
   };
 
-  return (
-    <JobsContext.Provider value={value}>{children}</JobsContext.Provider>
-  );
+  return <JobsContext.Provider value={value}>{children}</JobsContext.Provider>;
 };
