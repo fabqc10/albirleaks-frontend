@@ -1,30 +1,37 @@
-import NextAuth from "next-auth";
+import NextAuth, { Account, Session } from "next-auth";
+import { JWT } from "next-auth/jwt";
 import GoogleProvider from "next-auth/providers/google";
-import { NextAuthOptions } from "next-auth";
+import { sendTokenToBackend } from '@/utils/authUtils';  // Adjust this path according to your project structure
 
-const authOptions: NextAuthOptions = {
+const authOptions = {
   providers: [
     GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
   callbacks: {
-    async jwt({ token, account, user }) {
-      console.log("JWT callback", { token, account, user });
+    async jwt({ token, account }: { token: JWT; account?: Account | null }) {
       if (account) {
         token.accessToken = account.access_token;
-        if (user) {
-          token.id = user.id;
-        }
+        token.idToken = account.id_token;
       }
       return token;
     },
-    async session({ session, token }) {
-      console.log("Session callback", { session, token });
-      if (token) {
+    async session({ session, token }: { session: Session; token: JWT }) {
+      if (session.user) {
         session.accessToken = token.accessToken;
-        session.user.id = token.id as string;
+        session.idToken = token.idToken;
+        session.user.id = token.sub!;
+        
+        // Call the function here
+        const idToken = token.idToken;
+        if (idToken) {
+          const result = await sendTokenToBackend(idToken);
+          if (!result) {
+            console.error("Failed to send ID token to backend.");
+          }
+        }
       }
       return session;
     },

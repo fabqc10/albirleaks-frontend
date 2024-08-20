@@ -7,6 +7,7 @@ import React, {
   useState,
 } from "react";
 import { useAuth } from "./auth.context";
+import { useSession } from "next-auth/react";
 
 // Define the Job type
 type Job = {
@@ -16,6 +17,13 @@ type Job = {
   location: string;
   companyName: string;
   createdAt: string;
+};
+
+type JobForPost = {
+  jobTitle: string;
+  jobDescription: string;
+  location: string;
+  companyName: string;
 };
 
 // Define the props for the provider
@@ -30,7 +38,7 @@ type JobsContextType = {
   error: string | null;
   getJobs: () => void;
   getUserJobs: () => void;
-  addJob: (job: Job) => void;
+  addJob: (job: JobForPost) => void;
   updateJob: (jobId: string, updatedJob: Job) => void;
   deleteJob: (jobId: string) => void;
 };
@@ -95,17 +103,25 @@ export const JobsContext = createContext<JobsContextType>({
 
 export const JobsProvider = ({ children }: JobProviderProps) => {
   const { user, loading } = useAuth();
+  const { data: session } = useSession();
+  const token = session?.accessToken ?? null;
+  const tokenId = session?.idToken ?? null;
+
+  console.log("token", token);
+  console.log("tokenId", tokenId);
+
   const [jobs, setJobs] = useState<Job[]>([]);
   const [userJobs, setUserJobs] = useState<Job[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   console.log(jobs);
   console.log("USER JOBS: " + userJobs);
-  console.log("USER" + user?.id);
+  console.log("USER email" + user?.email);
 
   const getJobs = useCallback(async () => {
     try {
-      const response = await fetch("http://localhost:8080/jobs");
+      console.log("triggering getJobs");
+      const response = await fetch(`http://localhost:8080/jobs`);
       const fetchedJobs = await response.json();
       setJobs(fetchedJobs);
       setError(null);
@@ -115,12 +131,21 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
   }, []);
 
   const getUserJobs = useCallback(async () => {
+    console.log("I am getting called");
     if (user && user.id) {
       try {
+        console.log(
+          "getting jobs from " + `http://localhost:8080/jobs/user/${user.id}`
+        );
         const response = await fetch(
           `http://localhost:8080/jobs/user/${user.id}`,
           {
-            credentials: "include",
+            method: "GET",
+            credentials: "include", // Required for sending cookies
+            headers: {
+              Authorization: `Bearer ${tokenId}`,
+              "Content-Type": "application/json",
+            },
           }
         );
         if (!response.ok) {
@@ -133,23 +158,29 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
         setError("Error fetching user jobs. Please try again.");
       }
     }
-  }, [user]);
+  }, [user, token]);
 
-  const addJob = async (job: Job) => {
+  const addJob = async (job: JobForPost) => {
     try {
-      const response = await fetch("/api/jobs", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(job),
-      });
-      const newJob = await response.json();
-      setJobs([...jobs, newJob]);
+        const response = await fetch("http://localhost:8080/jobs", {
+            method: "POST",
+            credentials: "include",
+            headers: {
+                Authorization: `Bearer ${tokenId}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(job),
+        });
+        if (!response.ok) {
+            throw new Error("Network response was not ok");
+        }
+        const newJob = await response.json();
+        setJobs([...jobs, newJob]);
     } catch (error) {
-      setError("Error adding job. Please try again.");
+        setError("Error adding job. Please try again.");
     }
-  };
+};
+
 
   const updateJob = async (jobId: string, updatedJob: Job) => {
     try {
@@ -184,11 +215,11 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     getJobs();
   }, [getJobs]);
 
-  useEffect(() => {
-    if (!loading && user && user.id) {
-      getUserJobs(); // No argument needed
-    }
-  }, [loading, user, getUserJobs]);
+  // useEffect(() => {
+  //   if (!loading && user && user.id) {
+  //     getUserJobs();
+  //   }
+  // }, [loading, user, getUserJobs]);
 
   const value: JobsContextType = {
     jobs,
