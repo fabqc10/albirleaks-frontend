@@ -176,6 +176,8 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
         }
         const newJob = await response.json();
         setJobs([...jobs, newJob]);
+        setUserJobs([...userJobs, newJob]);
+        await getUserJobs();
     } catch (error) {
         setError("Error adding job. Please try again.");
     }
@@ -215,11 +217,11 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     getJobs();
   }, [getJobs]);
 
-  // useEffect(() => {
-  //   if (!loading && user && user.id) {
-  //     getUserJobs();
-  //   }
-  // }, [loading, user, getUserJobs]);
+  useEffect(() => {
+    if (!loading && user && user.id) {
+      getUserJobs();
+    }
+  }, [loading, user, getUserJobs]);
 
   const value: JobsContextType = {
     jobs,

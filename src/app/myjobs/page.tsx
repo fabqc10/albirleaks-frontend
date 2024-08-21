@@ -17,10 +17,10 @@ const page = () => {
         color="success"
         onClick={() =>
           addJob({
-            jobTitle: "Waiter",
-            jobDescription: "serve customers",
-            location: "Altea",
-            companyName: "La goleta beach",
+            jobTitle: "CEO",
+            jobDescription: "Run the company",
+            location: "Remote",
+            companyName: "Avengers",
           })
         }
       >
