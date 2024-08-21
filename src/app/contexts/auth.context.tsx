@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
   console.log("SESSION: ", session);
 
-  const login = () => signIn("google").then(response => console.log("login: " + response?.url));
+  const login = () => signIn("google",{ callbackUrl: 'http://localhost:3000/jobs' });
   const logout = () => {
     signOut({ callbackUrl: "/" }) // Redirects to the home page
       .then(() => {
