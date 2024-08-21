@@ -17,10 +17,11 @@ const page = () => {
         color="success"
         onClick={() =>
           addJob({
-            jobTitle: "CEO",
-            jobDescription: "Run the company",
-            location: "Remote",
-            companyName: "Avengers",
+            jobTitle: "Event manager",
+            jobDescription:
+              "organize events for the company and bring potential partners.",
+            location: "London",
+            companyName: "Corporate",
           })
         }
       >
@@ -31,18 +32,21 @@ const page = () => {
           You have no jobs posted
         </h1>
       ) : (
-        <div className="flex flex-wrap -mx-2">
-          <h1 className="text-center text-xl font-bold">My jobs</h1>
-
-          {userJobs.map((job) => (
-            <div
-              key={job.jobId}
-              className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
-            >
-              <JobCard job={job} />
-            </div>
-          ))}
-        </div>
+        <>
+          <h1 className="text-center text-xl font-bold align-center">
+            My jobs
+          </h1>
+          <div className="flex flex-wrap -mx-2">
+            {userJobs.map((job) => (
+              <div
+                key={job.jobId}
+                className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
+              >
+                <JobCard job={job} />
+              </div>
+            ))}
+          </div>
+        </>
       )}
     </div>
   );

@@ -24,13 +24,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = () => signIn("google").then(response => console.log("login: " + response?.url));
   const logout = () => {
-    signOut();
-    sessionStorage.clear();
-    localStorage.clear();
-    document.cookie =
-      "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    document.cookie =
-      "XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    signOut({ callbackUrl: "/" }) // Redirects to the home page
+      .then(() => {
+        sessionStorage.clear();
+        localStorage.clear();
+        document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        document.cookie = "XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+      });
   };
 
   // useEffect(() => {
