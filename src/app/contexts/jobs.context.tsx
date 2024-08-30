@@ -40,55 +40,8 @@ type JobsContextType = {
   getUserJobs: () => void;
   addJob: (job: JobForPost) => void;
   updateJob: (jobId: string, updatedJob: Job) => void;
-  deleteJob: (jobId: string) => void;
+  deleteJob: (jobId: string) => void; // No need to pass googleId here
 };
-
-const jobsArray: Job[] = [
-  {
-    jobId: "1",
-    jobTitle: "Software Engineer",
-    jobDescription:
-      "Develop and maintain web applications using modern JavaScript frameworks.",
-    location: "San Francisco, CA",
-    companyName: "Tech Corp",
-    createdAt: "2024-01-01T10:00:00Z",
-  },
-  {
-    jobId: "2",
-    jobTitle: "Product Manager",
-    jobDescription:
-      "Lead product development teams and define product strategy.",
-    location: "New York, NY",
-    companyName: "Innovate Inc.",
-    createdAt: "2024-02-15T09:30:00Z",
-  },
-  {
-    jobId: "3",
-    jobTitle: "Data Scientist",
-    jobDescription: "Analyze complex data sets to derive actionable insights.",
-    location: "Boston, MA",
-    companyName: "DataWorks",
-    createdAt: "2024-03-10T12:15:00Z",
-  },
-  {
-    jobId: "4",
-    jobTitle: "UX Designer",
-    jobDescription:
-      "Design user interfaces and improve user experience for our products.",
-    location: "Seattle, WA",
-    companyName: "DesignHub",
-    createdAt: "2024-04-05T08:45:00Z",
-  },
-  {
-    jobId: "5",
-    jobTitle: "Marketing Specialist",
-    jobDescription:
-      "Create and execute marketing campaigns to promote our services.",
-    location: "Chicago, IL",
-    companyName: "MarketMasters",
-    createdAt: "2024-05-20T14:00:00Z",
-  },
-];
 
 export const JobsContext = createContext<JobsContextType>({
   jobs: [],
@@ -107,50 +60,38 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
   const token = session?.accessToken ?? null;
   const tokenId = session?.idToken ?? null;
 
-  console.log("token", token);
-  console.log("tokenId", tokenId);
-
   const [jobs, setJobs] = useState<Job[]>([]);
   const [userJobs, setUserJobs] = useState<Job[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  console.log(jobs);
-  console.log("USER JOBS: " + userJobs);
-  console.log("USER email" + user?.email);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"; // Use env variable for API URL
 
   const getJobs = useCallback(async () => {
     try {
-      console.log("triggering getJobs");
-      const response = await fetch(`http://localhost:8080/jobs`);
+      const response = await fetch(`${apiUrl}/jobs`);
+      if (!response.ok) throw new Error("Failed to fetch jobs");
+      
       const fetchedJobs = await response.json();
       setJobs(fetchedJobs);
       setError(null);
     } catch (error) {
       setError("Error fetching jobs. Please try again.");
     }
-  }, []);
+  }, [apiUrl]);
 
   const getUserJobs = useCallback(async () => {
-    console.log("I am getting called");
     if (user && user.id) {
       try {
-        console.log(
-          "getting jobs from " + `http://localhost:8080/jobs/user/${user.id}`
-        );
-        const response = await fetch(
-          `http://localhost:8080/jobs/user/${user.id}`,
-          {
-            method: "GET",
-            credentials: "include", // Required for sending cookies
-            headers: {
-              Authorization: `Bearer ${tokenId}`,
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
+        const response = await fetch(`${apiUrl}/jobs/user/${user.id}`, {
+          method: "GET",
+          credentials: "include",
+          headers: {
+            Authorization: `Bearer ${tokenId}`,
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response.ok) throw new Error("Failed to fetch user jobs");
+
         const fetchedUserJobs = await response.json();
         setUserJobs(fetchedUserJobs);
         setError(null);
@@ -158,44 +99,48 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
         setError("Error fetching user jobs. Please try again.");
       }
     }
-  }, [user, token]);
+  }, [user, tokenId, apiUrl]);
 
   const addJob = async (job: JobForPost) => {
     try {
-        const response = await fetch("http://localhost:8080/jobs", {
-            method: "POST",
-            credentials: "include",
-            headers: {
-                Authorization: `Bearer ${tokenId}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(job),
-        });
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
-        }
-        const newJob = await response.json();
-        setJobs([...jobs, newJob]);
-        setUserJobs([...userJobs, newJob]);
-        await getUserJobs();
-    } catch (error) {
-        setError("Error adding job. Please try again.");
-    }
-};
+      const response = await fetch(`${apiUrl}/jobs`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${tokenId}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(job),
+      });
+      if (!response.ok) throw new Error("Failed to add job");
 
+      const newJob = await response.json();
+      setJobs((prevJobs) => [...prevJobs, newJob]);
+      setUserJobs((prevUserJobs) => [...prevUserJobs, newJob]);
+      await getUserJobs();
+    } catch (error) {
+      setError("Error adding job. Please try again.");
+    }
+  };
 
   const updateJob = async (jobId: string, updatedJob: Job) => {
     try {
-      const response = await fetch(`/api/jobs/${jobId}`, {
+      const response = await fetch(`${apiUrl}/jobs/${jobId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedJob),
       });
+      if (!response.ok) throw new Error("Failed to update job");
+
       const newJob = await response.json();
-      setJobs(jobs.map((job) => (job.jobId === jobId ? newJob : job)));
-      setUserJobs(userJobs.map((job) => (job.jobId === jobId ? newJob : job)));
+      setJobs((prevJobs) =>
+        prevJobs.map((job) => (job.jobId === jobId ? newJob : job))
+      );
+      setUserJobs((prevUserJobs) =>
+        prevUserJobs.map((job) => (job.jobId === jobId ? newJob : job))
+      );
     } catch (error) {
       setError("Error updating job. Please try again.");
     }
@@ -203,11 +148,17 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
 
   const deleteJob = async (jobId: string) => {
     try {
-      await fetch(`/api/jobs/${jobId}`, {
+      const response = await fetch(`${apiUrl}/jobs/${jobId}`, {
         method: "DELETE",
+        credentials: "include",
+        headers: {
+          Authorization: `Bearer ${tokenId}`,
+        },
       });
-      setJobs(jobs.filter((job) => job.jobId !== jobId));
-      setUserJobs(userJobs.filter((job) => job.jobId !== jobId));
+      if (!response.ok) throw new Error("Failed to delete job");
+
+      setJobs((prevJobs) => prevJobs.filter((job) => job.jobId !== jobId));
+      setUserJobs((prevUserJobs) => prevUserJobs.filter((job) => job.jobId !== jobId));
     } catch (error) {
       setError("Error deleting job. Please try again.");
     }

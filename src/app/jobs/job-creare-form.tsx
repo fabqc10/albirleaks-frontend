@@ -10,10 +10,9 @@ import {
   Input,
 } from "@nextui-org/react";
 import { useContext } from "react";
-import { JobsContext } from "../contexts/jobs.context"; // Adjust the path accordingly
+import { JobsContext } from "../contexts/jobs.context";
 import FormButton from "../components/common/form-button";
 
-// Define the type for the form data
 type JobForPost = {
   jobTitle: string;
   jobDescription: string;

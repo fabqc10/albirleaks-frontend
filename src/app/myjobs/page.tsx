@@ -6,7 +6,7 @@ import { Button } from "@nextui-org/react";
 import JobCreateForm from "../jobs/job-creare-form";
 
 const page = () => {
-  const { userJobs, getUserJobs, error, addJob } = useContext(JobsContext);
+  const { userJobs, getUserJobs, error, addJob, deleteJob } = useContext(JobsContext);
 
   useEffect(() => {
     getUserJobs();
@@ -49,7 +49,7 @@ const page = () => {
                 key={job.jobId}
                 className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
               >
-                <JobCard job={job} />
+                <JobCard job={job} onDelete={deleteJob}/>
               </div>
             ))}
           </div>
