@@ -127,7 +127,9 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     try {
       const response = await fetch(`${apiUrl}/jobs/${jobId}`, {
         method: "PUT",
+        credentials: "include",
         headers: {
+          Authorization: `Bearer ${tokenId}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedJob),

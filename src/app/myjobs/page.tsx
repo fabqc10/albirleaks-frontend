@@ -6,7 +6,7 @@ import { Button } from "@nextui-org/react";
 import JobCreateForm from "../jobs/job-creare-form";
 
 const page = () => {
-  const { userJobs, getUserJobs, error, addJob, deleteJob } = useContext(JobsContext);
+  const { userJobs, getUserJobs, error, addJob, deleteJob, updateJob } = useContext(JobsContext);
 
   useEffect(() => {
     getUserJobs();

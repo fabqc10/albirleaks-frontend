@@ -14,7 +14,7 @@ const Page = () => {
             key={job.jobId}
             className="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-2"
           >
-            <JobCard job={job} />
+            <JobCard job={job} showActions={false}/>
           </div>
         ))}
       </div>
