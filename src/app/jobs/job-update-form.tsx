@@ -49,7 +49,7 @@ const JobUpdateForm = ({ job}: JobUpdateFormProps) => {
   return (
     <Popover placement="right">
       <PopoverTrigger>
-        <Button color="primary">Update Job</Button>
+        <Button color="primary">Update</Button>
       </PopoverTrigger>
       <PopoverContent>
         <form onSubmit={handleSubmit(onSubmit)}>
