@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const login = () => signIn("google",{ callbackUrl: 'http://localhost:3000/jobs' });
   const logout = () => {
-    signOut({ callbackUrl: "/" }) // Redirects to the home page
+    signOut({ callbackUrl: "/" })
       .then(() => {
         sessionStorage.clear();
         localStorage.clear();
@@ -31,6 +31,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         document.cookie = "XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
       });
   };
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.expires) {
+      const checkSessionExpiry = () => {
+        const sessionExpiryTime = new Date(session.expires).getTime();
+        const currentTime = new Date().getTime();
+  
+        if (currentTime >= sessionExpiryTime) {
+          console.log("Session expired, logging out...");
+          logout();
+        } else {
+          console.log("Session is still valid");
+        }
+      };
+  
+      // Check every minute (60000 ms)
+      const intervalId = setInterval(checkSessionExpiry, 60000);
+      
+      // Run an initial check immediately
+      checkSessionExpiry();
+  
+      return () => clearInterval(intervalId);
+    }
+  }, [status, session, logout]);
 
   const value = {
     user: session?.user ?? null,
