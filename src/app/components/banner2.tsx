@@ -8,7 +8,6 @@ const Banner = () => {
         position: 'absolute',
         bottom:0,
         left:0
-        // Default positioning; adjust if necessary
       }}>
         <div className="absolute inset-0 bg-black opacity-40 z-10"></div>
         <div className="text-center z-20">

@@ -40,7 +40,7 @@ type JobsContextType = {
   getUserJobs: () => void;
   addJob: (job: JobForPost) => void;
   updateJob: (jobId: string, updatedJob: Job) => void;
-  deleteJob: (jobId: string) => void; // No need to pass googleId here
+  deleteJob: (jobId: string) => void;
 };
 
 export const JobsContext = createContext<JobsContextType>({
