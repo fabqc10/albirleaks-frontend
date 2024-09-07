@@ -11,7 +11,7 @@ const Header = () => {
   const { user, loading, login, logout } = useAuth();
 
   return (
-    <Navbar shouldHideOnScroll className="shadow mb-6 m-0">
+    <Navbar shouldHideOnScroll className="shadow mb-6 m-0 z-50">
       <NavbarBrand>
         <Link href="/">
           <AlbirLogo />

@@ -3,7 +3,7 @@ import React from "react";
 
 const Banner = () => {
   return (
-    <div className="w-full h-96 bg-gray-300 flex items-center" >
+    <div className="w-full h-96  flex items-center" >
       <div className="w-1/2 p-8">
         <span className="text-gray-600 text-xl">
           Whether you need help moving, delivering, shopping, or recycling, our app
