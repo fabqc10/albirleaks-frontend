@@ -27,6 +27,25 @@ const About = () => {
           </span>
         </div>
       </div>
+      <div className="relative h-full w-full p-10 flex justify-center items-center">
+        <div className="relative w-1/2 flex justify-center items-center text-center">
+          <span>
+            Da visibilidad más rapidamente a aquellos trabajos boca a boca y ayuda el crecimineto local.
+          </span>
+        </div>
+        <div className="w-1/2 flex justify-center">
+          <Image
+            src={
+              "https://cdn.pixabay.com/photo/2017/05/02/03/41/action-2277292_1280.jpg"
+            }
+            alt="collaboration"
+            width={500}
+            quality={100}
+            height={10}
+          />
+          
+        </div>
+      </div>
     </div>
   );
 };
