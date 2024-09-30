@@ -1,6 +1,7 @@
 import React from "react";
 import Banner3 from "../components/banner3";
 import Image from "next/image";
+import Banner4 from "../components/banner4";
 
 const About = () => {
   return (
@@ -21,17 +22,13 @@ const About = () => {
 
         <div className="relative w-1/2 flex justify-center items-center text-center">
           <span>
-            Esta es una plataforma creada para dar más visibilidad a puestos de
-            trabajo, encontrar ayuda si necesitas hacer una mudanza o cosas del
-            hogar, colaborar y conectar en la zona del Albir y alrededores.
+          Bienvenido a AlbirLeaks, una plataforma diseñada para fomentar el crecimiento local y fortalecer la comunidad del Albir y sus alrededores. Aquí, puedes publicar trabajos, ofrecer tus habilidades y conectar con personas que necesitan ayuda en diversas tareas, desde mudanzas hasta el cuidado de personas mayores.
           </span>
         </div>
       </div>
       <div className="relative h-full w-full p-10 flex justify-center items-center">
         <div className="relative w-1/2 flex justify-center items-center text-center">
-          <span>
-            Da visibilidad más rapidamente a aquellos trabajos boca a boca y ayuda el crecimineto local.
-          </span>
+            <p className="mb-4">En AlbirLeaks, creemos en el poder del boca a boca y en la importancia de las conexiones locales. Queremos dar visibilidad a los trabajos y servicios que a menudo se comparten de manera informal, ayudando a que las personas encuentren la ayuda que necesitan de manera rápida y eficiente.</p>
         </div>
         <div className="w-1/2 flex justify-center">
           <Image
@@ -46,6 +43,7 @@ const About = () => {
           
         </div>
       </div>
+      <Banner4 />
     </div>
   );
 };

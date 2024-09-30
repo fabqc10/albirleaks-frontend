@@ -12,8 +12,8 @@ const Banner3 = () => {
       }}
     >
       <div className="bg-white p-8 bg-opacity-70 text-center">
-        <h1 className="text-4xl font-bold text-gray-800">Connect,collaborate and work.</h1>
-        <p className="text-lg text-gray-600">Find jobs, offer help, and build connections within the Albir area and sorroundings.</p>
+        <h1 className="text-4xl font-bold text-gray-800">Conecta,colabora y trabaja.</h1>
+        <p className="text-lg text-gray-600">Encuentra trabajo, ofrece ayuda, y crea conexiones en el area del Albir y alrededores.</p>
       </div>
     </div>
   );
