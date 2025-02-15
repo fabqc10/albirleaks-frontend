@@ -1,50 +1,113 @@
 import React from "react";
-import Banner3 from "../components/banner3";
 import Image from "next/image";
-import Banner4 from "../components/banner4";
+import styles from "./About.module.css";
+
 
 const About = () => {
+  const benefits = [
+    "Acceso directo a oportunidades locales",
+    "Conexión con la comunidad de Albir",
+    "Publicación gratuita de ofertas",
+    "Notificaciones personalizadas",
+    "Soporte local dedicado",
+    "Proceso simplificado"
+  ];
+
+  const workerBenefits = [
+    "Acceso a ofertas exclusivas en la zona",
+    "Conexión directa con empleadores locales",
+    "Alertas de trabajo personalizadas",
+    "Perfil profesional destacado"
+  ];
+
+  const businessBenefits = [
+    "Publicación gratuita de ofertas",
+    "Acceso a talento local cualificado",
+    "Gestión simplificada de candidatos",
+    "Visibilidad en la comunidad"
+  ];
+
   return (
-    <div>
-      <Banner3 />
-      <div className="relative h-full w-full p-10 flex justify-center items-center">
-        <div className="w-1/2 flex justify-center">
-          <Image
-            src={
-              "https://alfas.es/wp-content/uploads/2024/01/WhatsApp-Image-2024-01-04-at-10.38.23-4.jpeg"
-            }
-            alt="albir-logo"
-            width={500}
-            quality={100}
-            height={10}
-          />
+    <main className={styles.container}>
+      {/* Hero Section */}
+      <section className={styles.heroSection}>
+        <div className={styles.heroContent}>
+          <h1>Conecta. Colabora. Crece en Albir.</h1>
+          <p className={styles.intro}>
+            Bienvenido a AlbirLeaks, tu plataforma comunitaria para conectar 
+            con oportunidades laborales y servicios en Albir. Nacimos de la 
+            necesidad de crear un espacio digital donde nuestra comunidad pudiera 
+            compartir y encontrar trabajo de manera efectiva y transparente.
+          </p>
+        </div>
+      </section>
+
+      {/* Why AlbirLeaks Section */}
+      <section className={styles.whySection}>
+        <h2>¿Por qué AlbirLeaks?</h2>
+        <div className={styles.missionBox}>
+          <p>
+            Somos más que una plataforma de empleo - somos el punto de encuentro 
+            digital de la comunidad de Albir. Facilitamos conexiones significativas 
+            entre personas y oportunidades, fortaleciendo el tejido económico y 
+            social de nuestra región.
+          </p>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <section className={styles.benefitsSection}>
+        <h2>Ventajas de formar parte de AlbirLeaks</h2>
+        <div className={styles.benefitsList}>
+          {benefits.map((benefit, index) => (
+            <div key={index} className={styles.benefitItem}>
+              <span className={styles.benefitIcon}>🔹</span>
+              <span>{benefit}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className={styles.featuresGrid}>
+        <div className={styles.featureCard}>
+          <h3>Para trabajadores y autónomos</h3>
+          <ul>
+            {workerBenefits.map((benefit, index) => (
+              <li key={index}>
+                <span className={styles.checkmark}>✅</span>
+                {benefit}
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="relative w-1/2 flex justify-center items-center text-center">
-          <span>
-          Bienvenido a AlbirLeaks, una plataforma diseñada para fomentar el crecimiento local y fortalecer la comunidad del Albir y sus alrededores. Aquí, puedes publicar trabajos, ofrecer tus habilidades y conectar con personas que necesitan ayuda en diversas tareas, desde mudanzas hasta el cuidado de personas mayores.
-          </span>
+        <div className={styles.featureCard}>
+          <h3>Para empresas y particulares</h3>
+          <ul>
+            {businessBenefits.map((benefit, index) => (
+              <li key={index}>
+                <span className={styles.checkmark}>✅</span>
+                {benefit}
+              </li>
+            ))}
+          </ul>
         </div>
-      </div>
-      <div className="relative h-full w-full p-10 flex justify-center items-center">
-        <div className="relative w-1/2 flex justify-center items-center text-center">
-            <p className="mb-4">En AlbirLeaks, creemos en el poder del boca a boca y en la importancia de las conexiones locales. Queremos dar visibilidad a los trabajos y servicios que a menudo se comparten de manera informal, ayudando a que las personas encuentren la ayuda que necesitan de manera rápida y eficiente.</p>
-        </div>
-        <div className="w-1/2 flex justify-center">
-          <Image
-            src={
-              "https://cdn.pixabay.com/photo/2017/05/02/03/41/action-2277292_1280.jpg"
-            }
-            alt="collaboration"
-            width={500}
-            quality={100}
-            height={10}
-          />
-          
-        </div>
-      </div>
-      <Banner4 />
-    </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className={styles.ctaSection}>
+        <h2>Forma parte de AlbirLeaks y haz crecer la comunidad</h2>
+        <p className={styles.ctaText}>
+          Únete a una comunidad en crecimiento que está transformando la manera 
+          en que nos conectamos y trabajamos en Albir.
+        </p>
+        <p className={styles.ctaHighlight}>
+          🌱 Publica. Conecta. Crece. Únete a AlbirLeaks hoy mismo y sé parte 
+          del cambio en Albir.
+        </p>
+      </section>
+    </main>
   );
 };
 
