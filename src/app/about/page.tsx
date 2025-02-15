@@ -1,50 +1,103 @@
-import React from "react";
-import Banner3 from "../components/banner3";
+'use client'
+import React, { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
-import Banner4 from "../components/banner4";
+import styles from "./About.module.css";
+import WelcomeMessage from '@/components/WelcomeMessage'
 
 const About = () => {
-  return (
-    <div>
-      <Banner3 />
-      <div className="relative h-full w-full p-10 flex justify-center items-center">
-        <div className="w-1/2 flex justify-center">
-          <Image
-            src={
-              "https://alfas.es/wp-content/uploads/2024/01/WhatsApp-Image-2024-01-04-at-10.38.23-4.jpeg"
-            }
-            alt="albir-logo"
-            width={500}
-            quality={100}
-            height={10}
-          />
-        </div>
+  const [displayText, setDisplayText] = useState('');
+  const [isTyping, setIsTyping] = useState(true);
+  
+  const textParts = useMemo(() => [
+    { text: "Conectando ", type: "normal" },
+    { text: "talento", type: "highlight" },
+    { text: " y ", type: "normal" },
+    { text: "oportunidades", type: "highlight" },
+    { text: " locales", type: "normal" }
+  ], []);
+  
+  useEffect(() => {
+    const fullText = textParts.map(part => part.text).join('');
+    let currentIndex = 0;
+    
+    const timer = setInterval(() => {
+      if (currentIndex < fullText.length) {
+        setDisplayText(fullText.slice(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        clearInterval(timer);
+        setIsTyping(false);
+      }
+    }, 100);
 
-        <div className="relative w-1/2 flex justify-center items-center text-center">
-          <span>
-          Bienvenido a AlbirLeaks, una plataforma diseñada para fomentar el crecimiento local y fortalecer la comunidad del Albir y sus alrededores. Aquí, puedes publicar trabajos, ofrecer tus habilidades y conectar con personas que necesitan ayuda en diversas tareas, desde mudanzas hasta el cuidado de personas mayores.
-          </span>
+    return () => clearInterval(timer);
+  }, [textParts]);
+
+  const renderText = () => {
+    let currentPos = 0;
+    return textParts.map((part, index) => {
+      const partialText = displayText.slice(currentPos, currentPos + part.text.length);
+      currentPos += part.text.length;
+      return (
+        <span key={index} className={part.type === 'highlight' ? styles.highlight : ''}>
+          {partialText}
+        </span>
+      );
+    });
+  };
+
+  const benefits = [
+    "Publica tu anuncio en pocos pasos",
+    "Conéctate con vecinos directamente",
+    "Encuentra soluciones cerca de casa",
+    "Sin intermediarios ni complicaciones",
+    "Fortalece la comunidad local",
+    "Proceso simple y directo"
+  ];
+
+  const workerBenefits = [
+    "Descubre oportunidades laborales en la zona",
+    "Contacto directo con empleadores locales",
+    "Encuentra trabajo cerca de casa",
+    "Comparte tu experiencia profesional"
+  ];
+
+  const businessBenefits = [
+    "Publica tus servicios sin coste",
+    "Llega a más clientes locales",
+    "Gestión simple de contactos",
+    "Fortalece tu presencia local"
+  ];
+
+  return (
+    <main className={styles.container}>
+      {/* Hero Section */}
+      <section className={styles.heroSection}>
+        <div className={styles.heroContent}>
+          <h1 className={styles.heroTitle}>
+            <span className={`${styles.typewriter} ${!isTyping ? styles.typingComplete : ''}`}>
+              {renderText()}
+            </span>
+          </h1>
+          <p className={styles.heroDescription}>
+            Nacimos de la necesidad de nuestra comunidad. 
+            Un espacio digital donde encontrar y compartir 
+            <span className={styles.emphasis}> trabajo</span>, 
+            <span className={styles.emphasis}> servicios</span> y 
+            <span className={styles.emphasis}> colaboración</span> de 
+            manera efectiva y transparente.
+          </p>
         </div>
-      </div>
-      <div className="relative h-full w-full p-10 flex justify-center items-center">
-        <div className="relative w-1/2 flex justify-center items-center text-center">
-            <p className="mb-4">En AlbirLeaks, creemos en el poder del boca a boca y en la importancia de las conexiones locales. Queremos dar visibilidad a los trabajos y servicios que a menudo se comparten de manera informal, ayudando a que las personas encuentren la ayuda que necesitan de manera rápida y eficiente.</p>
-        </div>
-        <div className="w-1/2 flex justify-center">
-          <Image
-            src={
-              "https://cdn.pixabay.com/photo/2017/05/02/03/41/action-2277292_1280.jpg"
-            }
-            alt="collaboration"
-            width={500}
-            quality={100}
-            height={10}
-          />
-          
-        </div>
-      </div>
-      <Banner4 />
-    </div>
+      </section>
+
+      {/* Why AlbirLeaks Section */}
+      <section className={styles.whySection}>
+        <WelcomeMessage />
+      </section>
+
+      {/* CTA Section */}
+
+    </main>
   );
 };
 

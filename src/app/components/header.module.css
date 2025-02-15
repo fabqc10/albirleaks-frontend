@@ -1,0 +1,69 @@
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 2rem;
+  height: 2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1100;
+}
+
+.hamburger span {
+  width: 2rem;
+  height: 0.25rem;
+  background: #1a5f7a;
+  border-radius: 10px;
+  transition: all 0.3s linear;
+  position: relative;
+  transform-origin: 1px;
+}
+
+.mobileMenu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 100%;
+  height: 100vh;
+  background: white;
+  padding: 5rem 2rem;
+  transition: right 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+.mobileMenu.open {
+  right: 0;
+}
+
+.mobileNav {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.mobileNav :global(.nextui-navbar-content) {
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.mobileNav :global(.nextui-navbar-item) {
+  height: auto;
+  padding: 0.5rem 0;
+}
+
+.mobileNav a {
+  color: #1a5f7a;
+  text-decoration: none;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+@media (min-width: 640px) {
+  .hamburger,
+  .mobileMenu {
+    display: none;
+  }
+} 
