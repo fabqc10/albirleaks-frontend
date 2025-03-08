@@ -1,5 +1,6 @@
 import React from "react";
 import JobUpdateForm from "../jobs/job-update-form";
+import { FiMapPin, FiClock, FiTrash2 } from 'react-icons/fi';
 
 type Job = {
   jobId: string;
@@ -17,34 +18,59 @@ type JobCardProps = {
 };
 
 const JobCard = ({ job, onDelete, showActions = true }: JobCardProps) => {
-  const { jobId, jobTitle, jobDescription, location, companyName, createdAt } =
-    job;
+  const { jobId, jobTitle, jobDescription, location, companyName, createdAt } = job;
 
   const handleDelete = () => {
-    if (confirm("Are you sure you want to delete this job?")) {
-      console.log("JOB TO DELETE: " + jobId);
-      onDelete?.(jobId); // Call onDelete only if it's provided
+    if (confirm("¿Estás seguro de que quieres eliminar este anuncio?")) {
+      onDelete?.(jobId);
     }
   };
 
   return (
-    <div className="max-w-sm mx-auto bg-white shadow-lg rounded-lg overflow-hidden my-4">
-      <div className="px-6 py-4">
-        <h2 className="text-xl font-bold text-gray-900">{jobTitle}</h2>
-        <p className="text-lg text-gray-700 mt-2">{companyName}</p>
-        <p className="text-gray-600 mt-2">{jobDescription}</p>
-        <p className="text-gray-500 mt-4">Location: {location}</p>
-        <p className="text-gray-500 mt-1">Posted on: {createdAt}</p>
+    <div className="bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300">
+      <div className="p-6">
+        {/* Header */}
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800 line-clamp-2 hover:line-clamp-none">
+              {jobTitle}
+            </h2>
+            <p className="text-blue-600 font-medium mt-1">
+              {companyName}
+            </p>
+          </div>
+          <div className="bg-blue-50 text-blue-600 px-3 py-1 rounded-full text-sm font-medium">
+            Activo
+          </div>
+        </div>
 
+        {/* Description */}
+        <p className="text-gray-600 mt-3 line-clamp-3 hover:line-clamp-none">
+          {jobDescription}
+        </p>
+
+        {/* Meta Info */}
+        <div className="flex items-center gap-4 mt-4 pt-4 border-t border-gray-100 text-gray-500 text-sm">
+          <div className="flex items-center gap-1">
+            <FiMapPin className="w-4 h-4" />
+            <span>{location}</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <FiClock className="w-4 h-4" />
+            <span>{createdAt}</span>
+          </div>
+        </div>
+
+        {/* Actions */}
         {showActions && (
-          <div className="flex justify-center items-center space-x-4 mt-4">
+          <div className="flex items-center gap-3 mt-4 pt-4 border-t border-gray-100">
             <button
               onClick={handleDelete}
-              className="bg-red-500 text-white px-6 py-2 rounded-lg hover:bg-red-600 transition-colors duration-200 shadow-md"
+              className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             >
-              Delete
+              <FiTrash2 className="w-4 h-4" />
+              <span>Eliminar</span>
             </button>
-
             <JobUpdateForm job={job} />
           </div>
         )}

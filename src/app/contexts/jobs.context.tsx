@@ -38,8 +38,8 @@ type JobsContextType = {
   error: string | null;
   getJobs: () => void;
   getUserJobs: () => void;
-  addJob: (job: JobForPost) => void;
-  updateJob: (jobId: string, updatedJob: Job) => void;
+  addJob: (job: Omit<Job, 'jobId' | 'createdAt'>) => void;
+  updateJob: (jobId: string, job: Partial<Job>) => void;
   deleteJob: (jobId: string) => void;
 };
 
@@ -101,7 +101,7 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     }
   }, [user, tokenId, apiUrl]);
 
-  const addJob = async (job: JobForPost) => {
+  const addJob = async (job: Omit<Job, 'jobId' | 'createdAt'>) => {
     try {
       const response = await fetch(`${apiUrl}/jobs`, {
         method: "POST",
@@ -123,7 +123,7 @@ export const JobsProvider = ({ children }: JobProviderProps) => {
     }
   };
 
-  const updateJob = async (jobId: string, updatedJob: Job) => {
+  const updateJob = async (jobId: string, updatedJob: Partial<Job>) => {
     try {
       const response = await fetch(`${apiUrl}/jobs/${jobId}`, {
         method: "PUT",

@@ -1,7 +1,7 @@
 "use client";
 
 import { NextUIProvider } from "@nextui-org/react";
-import SessionWrapper from "./SessionWrapper";
+import { SessionProvider } from "next-auth/react";
 import { AuthProvider } from "./contexts/auth.context";
 import { JobsProvider } from "./contexts/jobs.context";
 
@@ -11,12 +11,14 @@ interface ProvidersProps {
 
 export default function Providers({ children }: ProvidersProps) {
   return (
-    <SessionWrapper>
-      <AuthProvider>
-        <JobsProvider>
-          <NextUIProvider>{children}</NextUIProvider>
-        </JobsProvider>
-      </AuthProvider>
-    </SessionWrapper>
+    <SessionProvider>
+      <NextUIProvider>
+        <AuthProvider>
+          <JobsProvider>
+            {children}
+          </JobsProvider>
+        </AuthProvider>
+      </NextUIProvider>
+    </SessionProvider>
   );
 }

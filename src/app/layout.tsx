@@ -4,7 +4,6 @@ import "@/styles/globals.css";
 import Providers from "./providers";
 import Header from "@/app/components/header";
 
-
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-heading",
