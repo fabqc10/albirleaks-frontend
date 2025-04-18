@@ -1,104 +1,460 @@
 'use client'
-import React, { useEffect, useState, useMemo } from "react";
-import Image from "next/image";
-import styles from "./About.module.css";
-import WelcomeMessage from '@/components/WelcomeMessage'
+import React, { useState, useRef, useEffect } from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import {
+  FiArrowRight, FiHeart, FiUsers, FiMapPin, FiBriefcase,
+  FiRefreshCw,
+  FiHome,
+  FiTrash2
+} from 'react-icons/fi';
+import { useAuth } from '../contexts/auth.context';
 
-const About = () => {
-  const [displayText, setDisplayText] = useState('');
-  const [isTyping, setIsTyping] = useState(true);
-  
-  const textParts = useMemo(() => [
-    { text: "Conectando ", type: "normal" },
-    { text: "talento", type: "highlight" },
-    { text: " y ", type: "normal" },
-    { text: "oportunidades", type: "highlight" },
-    { text: " locales", type: "normal" }
-  ], []);
-  
+// Componente reutilizable para las tarjetas del carrusel
+const CarouselCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+  <motion.div
+    className="relative flex-shrink-0 w-[300px] md:w-[350px] h-[380px] bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 overflow-hidden group scroll-snap-center md:scroll-snap-start"
+    whileHover={{ scale: 1.03 }}
+    transition={{ type: 'spring', stiffness: 300 }}
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+  >
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <div className="relative z-10 flex flex-col h-full">
+      <Icon className="w-10 h-10 text-blue-400 mb-6" />
+      <h3 className="text-xl font-semibold text-white mb-4">{title}</h3>
+      <p className="text-gray-400 text-sm flex-grow">{description}</p>
+      <Link href="#" className="inline-flex items-center text-sm text-blue-400 group-hover:text-white transition-colors mt-4">
+        Saber más <FiArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
+      </Link>
+    </div>
+  </motion.div>
+);
+
+// Datos para el carrusel
+const carouselItems = [
+  {
+    icon: FiBriefcase,
+    title: "Conexión Laboral",
+    description: "El corazón de AlbirJobs. Facilitamos la búsqueda y publicación de empleos locales, conectando talento y empresas en El Albir."
+  },
+  {
+    icon: FiRefreshCw,
+    title: "Economía Circular",
+    description: "Fomentamos la reutilización. Conecta con vecinos para dar una segunda vida a objetos o encontrar tesoros de segunda mano."
+  },
+  {
+    icon: FiHome,
+    title: "Apoyando El Albir",
+    description: "Menos viajes innecesarios. Al conectar vecinos para tareas y servicios, reducimos el tráfico y fortalecemos la comunidad."
+  },
+  {
+    icon: FiTrash2,
+    title: "Reciclaje Responsable",
+    description: "Facilitamos la ayuda para llevar tus residuos al punto limpio correcto, promoviendo un El Albir más sostenible."
+  },
+];
+
+const AboutPage = () => {
+  const { login } = useAuth();
+  const carouselWrapperRef = useRef<HTMLDivElement>(null);
+  const carouselContentRef = useRef<HTMLDivElement>(null);
+  const [dragConstraintLeft, setDragConstraintLeft] = useState(0);
+
   useEffect(() => {
-    const fullText = textParts.map(part => part.text).join('');
-    let currentIndex = 0;
-    
-    const timer = setInterval(() => {
-      if (currentIndex < fullText.length) {
-        setDisplayText(fullText.slice(0, currentIndex + 1));
-        currentIndex++;
-      } else {
-        clearInterval(timer);
-        setIsTyping(false);
+    const calculateConstraints = () => {
+      if (carouselContentRef.current && carouselWrapperRef.current) {
+        // Usamos offsetWidth del wrapper (ancho total visible incluyendo padding)
+        const wrapperOffsetWidth = carouselWrapperRef.current.offsetWidth;
+        // Usamos scrollWidth del contenido (ancho total de las tarjetas + gaps)
+        const contentScrollWidth = carouselContentRef.current.scrollWidth;
+
+        // El límite izquierdo es la diferencia negativa, asegurando que no sea positivo
+        // Si el contenido es más pequeño o igual al wrapper, el límite es 0
+        const newConstraint = Math.min(0, wrapperOffsetWidth - contentScrollWidth);
+
+        // Solo actualiza si el valor cambia
+        if (newConstraint !== dragConstraintLeft) {
+            setDragConstraintLeft(newConstraint);
+        }
+        // console.log(`Wrapper offsetWidth: ${wrapperOffsetWidth}, Content scrollWidth: ${contentScrollWidth}, Constraint: ${newConstraint}`); // Debug
       }
-    }, 100);
+    };
 
-    return () => clearInterval(timer);
-  }, [textParts]);
+    // Observar cambios de tamaño en ambos elementos
+    const wrapperObserver = new ResizeObserver(calculateConstraints);
+    const contentObserver = new ResizeObserver(calculateConstraints);
 
-  const renderText = () => {
-    let currentPos = 0;
-    return textParts.map((part, index) => {
-      const partialText = displayText.slice(currentPos, currentPos + part.text.length);
-      currentPos += part.text.length;
-      return (
-        <span key={index} className={part.type === 'highlight' ? styles.highlight : ''}>
-          {partialText}
-        </span>
-      );
-    });
+    const wrapperElement = carouselWrapperRef.current;
+    const contentElement = carouselContentRef.current;
+
+    if (wrapperElement) {
+      wrapperObserver.observe(wrapperElement);
+    }
+    if (contentElement) {
+      contentObserver.observe(contentElement);
+    }
+
+    // Cálculo inicial
+    calculateConstraints();
+
+    return () => {
+      // Limpiar observers al desmontar
+      if (wrapperElement) {
+        wrapperObserver.unobserve(wrapperElement);
+      }
+      if (contentElement) {
+        contentObserver.unobserve(contentElement);
+      }
+      wrapperObserver.disconnect();
+      contentObserver.disconnect();
+    };
+  }, [dragConstraintLeft]); // Dependencia para evitar bucles si se actualiza estado
+
+  const baseNodes = [
+    { x: 50, y: 70 }, { x: 250, y: 50 }, { x: 150, y: 150 },
+    { x: 70, y: 250 }, { x: 230, y: 240 }
+  ];
+
+  const connections = [
+    [0, 2], [1, 2], [3, 2], [4, 2], [0, 4]
+  ];
+
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHoveringNetwork, setIsHoveringNetwork] = useState(false);
+  const networkRef = useRef<HTMLDivElement>(null);
+  const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (networkRef.current) {
+      const rect = networkRef.current.getBoundingClientRect();
+      setMousePosition({
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top,
+      });
+    }
   };
 
-  const benefits = [
-    "Publica tu anuncio en pocos pasos",
-    "Conéctate con vecinos directamente",
-    "Encuentra soluciones cerca de casa",
-    "Sin intermediarios ni complicaciones",
-    "Fortalece la comunidad local",
-    "Proceso simple y directo"
-  ];
-
-  const workerBenefits = [
-    "Descubre oportunidades laborales en la zona",
-    "Contacto directo con empleadores locales",
-    "Encuentra trabajo cerca de casa",
-    "Comparte tu experiencia profesional"
-  ];
-
-  const businessBenefits = [
-    "Publica tus servicios sin coste",
-    "Llega a más clientes locales",
-    "Gestión simple de contactos",
-    "Fortalece tu presencia local"
-  ];
-
   return (
-    <main className={styles.container}>
+    <div className="bg-black text-white overflow-x-hidden">
       {/* Hero Section */}
-      <section className={styles.heroSection}>
-        <div className={styles.heroContent}>
-          <h1 className={styles.heroTitle}>
-            <span className={`${styles.typewriter} ${!isTyping ? styles.typingComplete : ''}`}>
-              {renderText()}
-            </span>
-          </h1>
-          <p className={styles.heroDescription}>
-            Nacimos de la necesidad de nuestra comunidad. 
-            Un espacio digital donde encontrar y compartir 
-            <span className={styles.emphasis}> trabajo</span>, 
-            <span className={styles.emphasis}> servicios</span> y 
-            <span className={styles.emphasis}> colaboración</span> de 
-            manera efectiva y transparente.
-          </p>
+      <motion.section 
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="relative min-h-screen flex items-center justify-center text-center bg-gradient-to-b from-gray-900 to-black px-6 py-24"
+      >
+        <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-10" />
+        
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+          >
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight tracking-tight">
+              Tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Conexión</span> Local
+            </h1>
+            <p className="text-xl md:text-2xl text-gray-300 mb-10">
+              AlbirJobs es tu solución local cuando necesitas encontrar trabajo o ayuda en El Albir. Nuestra plataforma conecta en tiempo real a vecinos que buscan u ofrecen empleo, servicios o asistencia para tareas cotidianas.
+            </p>
+            <div className="flex justify-center gap-4">
+              <Link 
+                href="/jobs"
+                className="group relative inline-flex items-center justify-center px-6 py-3 bg-white text-black rounded-full
+                  font-medium overflow-hidden transition-all duration-300 hover:scale-105"
+              >
+                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 
+                    group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="relative group-hover:text-white transition-colors">
+                  Buscar Oportunidades
+                  <FiArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </motion.section>
+
+      {/* Our Story Section */}
+      <section className="py-20 md:py-32 bg-black">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* --- Visual Element con Efecto Hover --- */}
+            <motion.div
+              ref={networkRef}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="relative h-[450px] max-w-lg mx-auto lg:mx-0"
+              onMouseMove={handleMouseMove}
+              onMouseEnter={() => setIsHoveringNetwork(true)}
+              onMouseLeave={() => setIsHoveringNetwork(false)}
+            >
+              {/* Contenedor principal */}
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-black to-purple-900/10 rounded-3xl border border-white/10 overflow-hidden">
+                <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-5 scale-150"/>
+
+                {/* SVG para las líneas y nodos */}
+                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 300">
+                  {/* Definir el gradiente para las líneas */}
+                  <defs>
+                    <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="rgba(59, 130, 246, 0.8)" /> {/* Azul */}
+                      <stop offset="100%" stopColor="rgba(168, 85, 247, 0.8)" /> {/* Púrpura */}
+                    </linearGradient>
+                  </defs>
+
+                  {/* Líneas de Conexión (animadas) */}
+                  {connections.map((conn, i) => {
+                    const p1 = baseNodes[conn[0]];
+                    const p2 = baseNodes[conn[1]];
+                    return (
+                      <motion.line
+                        key={`line-${i}`}
+                        x1={p1.x} y1={p1.y} x2={p2.x} y2={p2.y}
+                        stroke="url(#lineGradient)"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                        initial={{ pathLength: 0, opacity: 0 }}
+                        animate={{ pathLength: 1, opacity: [0.6, 0.3, 0.6] }}
+                        transition={{
+                          pathLength: { delay: i * 0.15 + 0.8, duration: 1, ease: "easeInOut" },
+                          opacity: { delay: i * 0.15 + 1.8, duration: 3, repeat: Infinity, ease: "easeInOut" }
+                        }}
+                      />
+                    );
+                  })}
+
+                  {/* Nodos (con movimiento) */}
+                  {baseNodes.map((point, i) => (
+                    <motion.g
+                      key={`node-group-${i}`}
+                      initial={{ x: point.x, y: point.y }}
+                      animate={{
+                        x: [point.x, point.x + (Math.random() - 0.5) * 10, point.x],
+                        y: [point.y, point.y + (Math.random() - 0.5) * 10, point.y],
+                      }}
+                      transition={{
+                        duration: 5 + Math.random() * 5,
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        ease: "easeInOut"
+                      }}
+                    >
+                      <motion.circle
+                        key={`node-circle-${i}`}
+                        r="5"
+                        fill="rgba(255, 255, 255, 0.1)"
+                        stroke="rgba(255, 255, 255, 0.2)"
+                        strokeWidth="1"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        transition={{ delay: i * 0.1 + 0.5, type: 'spring', stiffness: 150, damping: 15 }}
+                      >
+                         {/* Brillo interno pulsante */}
+                         <motion.circle
+                           r="3"
+                           fill="white"
+                           initial={{ opacity: 0 }}
+                           animate={{ opacity: [0, 0.8, 0] }}
+                           transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 + 1 }}
+                         />
+                      </motion.circle>
+                    </motion.g>
+                  ))}
+                </svg>
+
+                {/* Efecto Spotlight */}
+                <motion.div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    background: `radial-gradient(circle 300px at ${mousePosition.x}px ${mousePosition.y}px, rgba(255, 255, 255, 0.10), transparent)`,
+                  }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: isHoveringNetwork ? 1 : 0 }}
+                  transition={{ duration: 0.3 }}
+                />
+              </div>
+            </motion.div>
+            {/* --- Fin Visual Element --- */}
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+            >
+              <span className="text-sm font-mono text-blue-400 mb-4 block">NUESTRA HISTORIA</span>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
+                Una idea <span className="text-blue-400">simple</span>,<br/> un impacto <span className="text-purple-400">real</span>.
+              </h2>
+              <p className="text-lg text-gray-400 mb-6">
+                AlbirJobs nació para tejer una red de apoyo local usando la tecnología. Queremos revolucionar cómo los vecinos de El Albir encuentran trabajo y se ayudan mutuamente.
+              </p>
+              <p className="text-lg text-gray-400">
+                ¿Necesitas contratar personal? ¿Buscas ayuda para una mudanza? ¿Quieres ofrecer tus habilidades? Aquí conectas directamente con quien necesitas, con solo unos clics. Facilitamos la vida diaria de unos mientras creamos oportunidades para otros.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* Why AlbirLeaks Section */}
-      <section className={styles.whySection}>
-        <WelcomeMessage />
+      {/* Core Values / How it Works */}
+      <section className="py-20 md:py-32 bg-gray-900/50 border-y border-white/10">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <motion.h2 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="text-4xl md:text-5xl font-bold mb-6"
+            >
+              Así Conectamos El Albir
+            </motion.h2>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8, delay: 0.1 }}
+              className="text-xl text-gray-400"
+            >
+              Una plataforma simple para encontrar y ofrecer trabajo o ayuda local.
+            </motion.p>
+        </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {coreValues.map((value, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                className="bg-white/5 p-8 rounded-2xl border border-white/10 text-center"
+              >
+                <value.icon className="w-12 h-12 text-blue-400 mx-auto mb-6" />
+                <h3 className="text-xl font-semibold mb-3">{value.title}</h3>
+                <p className="text-gray-400 text-sm">{value.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Carousel Section - Reimplementada con CSS Scroll Snap */}
+      <section className="py-20 md:py-32 bg-black">
+        <div className="max-w-7xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="mb-16 text-center px-6"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Más que Empleo</h2>
+            <p className="text-lg text-gray-400">Descubre cómo AlbirJobs fortalece nuestra comunidad</p>
+          </motion.div>
 
-    </main>
+          {/* Contenedor Scrollable con Snap */}
+          <div
+            className="flex overflow-x-auto gap-6 pb-8 px-6 md:px-8
+                       scroll-smooth snap-x snap-mandatory
+                       scrollbar-hide"
+          >
+            {carouselItems.map((item, index) => (
+              <CarouselCard
+                key={index}
+                icon={item.icon}
+                title={item.title}
+                description={item.description}
+              />
+            ))}
+          </div>
+           {/* Indicador visual de scroll (opcional) */}
+           <div className="text-center text-gray-500 text-sm mt-4 hidden md:block">
+             Desliza para ver más →
+      </div>
+        </div>
+      </section>
+
+      {/* Impact Section (Like Fast Facts) */}
+      <section className="py-20 md:py-32 bg-black">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            {fastFacts.map((fact, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+              >
+                <div className="text-6xl font-bold mb-3 bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
+                  {fact.value}
+                </div>
+                <p className="text-gray-400">{fact.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Join Us CTA */}
+      <section className="py-20 bg-gradient-to-t from-gray-900 to-black">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="relative bg-white/5 rounded-2xl p-12 border border-white/10 backdrop-blur-lg"
+          >
+             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-xl" />
+             <div className="relative">
+              <h2 className="text-4xl font-bold mb-6">Únete a la Comunidad</h2>
+              <p className="text-xl text-gray-300 mb-8">
+                Forma parte de la red que está haciendo de El Albir un lugar aún mejor para vivir y trabajar.
+              </p>
+              <button
+                onClick={login}
+                className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500
+                  text-white rounded-full font-medium hover:opacity-90 transition-opacity transform hover:scale-105"
+              >
+                Crear mi Cuenta / Acceder
+                <FiArrowRight className="ml-2" />
+              </button>
+             </div>
+          </motion.div>
+      </div>
+      </section>
+    </div>
   );
 };
 
-export default About;
+const coreValues = [
+  {
+    icon: FiMapPin,
+    title: "Hiperlocal",
+    description: "Todo sucede aquí, en El Albir. Conectamos vecinos con oportunidades y ayuda a la vuelta de la esquina."
+  },
+  {
+    icon: FiUsers,
+    title: "Conexión Directa",
+    description: "Contacta y acuerda directamente con otros vecinos, sin intermediarios ni complicaciones."
+  },
+  {
+    icon: FiBriefcase,
+    title: "Oportunidades Mutuas",
+    description: "Facilitamos que unos encuentren la ayuda o el trabajo que necesitan, y otros obtengan ingresos o experiencia."
+  }
+];
+
+const fastFacts = [
+  { value: "1000+", label: "Vecinos Conectados" },
+  { value: "<5 min", label: "Tiempo para Publicar" },
+  { value: "100%", label: "Enfoque en El Albir" },
+];
+
+export default AboutPage;

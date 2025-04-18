@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react';
+import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem, User } from '@nextui-org/react';
 import Link from 'next/link';
 import React, { useState, useEffect, Suspense } from 'react';
 import AlbirLogo from './albirlogo';
@@ -8,6 +8,7 @@ import paths from '@/paths';
 import { useAuth } from '@/app/contexts/auth.context';
 import styles from './header.module.css';
 import dynamic from 'next/dynamic';
+import { FcGoogle } from "react-icons/fc";
 
 const MobileMenu = dynamic(() => import('./MobileMenu'), {
   ssr: false,
@@ -46,18 +47,30 @@ const Header = () => {
               {user ? (
                 <>
                   <NavbarItem className="hidden lg:flex">
+                    <User   
+                      name={user.name}
+                      description="Usuario"
+                      avatarProps={{
+                        src: user.image ?? undefined
+                      }}
+                    />
+                  </NavbarItem>
+                  <NavbarItem>
                     <Button onClick={logout} color="primary" variant="flat">
                       Logout
                     </Button>
                   </NavbarItem>
-                  <NavbarItem>
-                    <span>Welcome, {user.name}</span>
-                  </NavbarItem>
                 </>
               ) : (
                 <NavbarItem className="hidden lg:flex">
-                  <Button onClick={login} color="primary" variant="flat">
-                    Login
+                  <Button
+                    onClick={login}
+                    color="primary"
+                    variant="solid"
+                    startContent={<FcGoogle />}
+                    className="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50"
+                  >
+                    Continuar con Google
                   </Button>
                 </NavbarItem>
               )}
