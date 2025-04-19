@@ -15,7 +15,7 @@ import { useAuth } from '../contexts/auth.context';
 // Componente reutilizable para las tarjetas - VISUAL ACTUALIZADO
 const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
   <motion.div
-    className="relative h-[380px] bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 overflow-hidden group"
+    className="relative h-[380px] bg-white rounded-2xl border border-gray-200 shadow-lg p-8 overflow-hidden group"
     whileHover={{ scale: 1.03, zIndex: 10 }}
     transition={{ type: 'spring', stiffness: 300 }}
     initial={{ opacity: 0, y: 20 }}
@@ -23,17 +23,17 @@ const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementTy
     viewport={{ once: true, amount: 0.3 }}
   >
     {/* Efecto hover gradiente */}
-    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+    <div className="absolute inset-0 bg-gradient-to-br from-blue-100/50 to-purple-100/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
     {/* Icono grande de fondo - MÁS GRANDE Y VISIBLE */}
-    <Icon className="absolute z-0 -bottom-10 -right-10 w-40 h-40 text-white/[0.03] transform group-hover:scale-115 group-hover:rotate-[-12deg] transition-transform duration-500 ease-out" />
+    <Icon className="absolute z-0 -bottom-10 -right-10 w-40 h-40 text-gray-900/[0.02] transform group-hover:scale-115 group-hover:rotate-[-12deg] transition-transform duration-500 ease-out" />
 
     {/* Contenido principal */}
     <div className="relative z-10 flex flex-col h-full">
-      <Icon className="w-10 h-10 text-blue-400 mb-6" />
-      <h3 className="text-xl font-semibold text-white mb-4">{title}</h3>
-      <p className="text-gray-400 text-sm flex-grow">{description}</p>
-      <Link href="#" className="inline-flex items-center text-sm text-blue-400 group-hover:text-white transition-colors mt-4 self-start">
+      <Icon className="w-10 h-10 text-blue-500 mb-6" />
+      <h3 className="text-xl font-semibold text-gray-900 mb-4">{title}</h3>
+      <p className="text-gray-600 text-sm flex-grow">{description}</p>
+      <Link href="#" className="inline-flex items-center text-sm text-blue-600 group-hover:text-blue-800 transition-colors mt-4 self-start">
         Saber más <FiArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
       </Link>
     </div>
@@ -100,15 +100,15 @@ const AboutPage = () => {
   };
 
   return (
-    <div className="bg-black text-white overflow-x-hidden">
+    <div className="bg-white text-gray-900 overflow-x-hidden">
       {/* Hero Section */}
       <motion.section 
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
-        className="relative min-h-screen flex items-center justify-center text-center bg-gradient-to-b from-gray-900 to-black px-6 py-24"
+        className="relative min-h-screen flex items-center justify-center text-center bg-gradient-to-b from-gray-100 to-gray-200 px-6 py-24"
       >
-        <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-10" />
+        {/* <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-10" /> */}
         
         <div className="relative z-10 max-w-4xl mx-auto">
           <motion.div
@@ -116,21 +116,19 @@ const AboutPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.8 }}
           >
-            <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight tracking-tight">
-              Tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Conexión</span> Local
+            <h1 className="text-6xl md:text-8xl font-bold mb-6 leading-tight tracking-tight text-gray-900">
+              Tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Conexión</span> Local
             </h1>
-            <p className="text-xl md:text-2xl text-gray-300 mb-10">
+            <p className="text-xl md:text-2xl text-gray-600 mb-10">
               AlbirJobs es tu solución local cuando necesitas encontrar trabajo o ayuda en El Albir. Nuestra plataforma conecta en tiempo real a vecinos que buscan u ofrecen empleo, servicios o asistencia para tareas cotidianas.
             </p>
             <div className="flex justify-center gap-4 mb-20">
               <Link 
                 href="/jobs"
-                className="group relative inline-flex items-center justify-center px-6 py-3 bg-white text-black rounded-full
-                  font-medium overflow-hidden transition-all duration-300 hover:scale-105"
+                className="group relative inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white rounded-full
+                  font-medium overflow-hidden transition-all duration-300 hover:scale-105 hover:bg-blue-700 shadow-md"
               >
-                 <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0 
-                    group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="relative group-hover:text-white transition-colors">
+                <span className="relative">
                   Buscar Oportunidades
                   <FiArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
                 </span>
@@ -141,7 +139,7 @@ const AboutPage = () => {
           {/* --- Inicio: Flecha animada (Chevron) para scroll --- */}
         
           <motion.div
-            className="absolute top-78 left-1/2 -translate-x-1/2 text-gray-400"
+            className="absolute bottom-4 left-1/2 -translate-x-1/2 text-gray-500"
             animate={{
               y: [0, 6, 0],
               opacity: [0.8, 0.4, 0.8]
@@ -153,7 +151,7 @@ const AboutPage = () => {
               ease: "easeInOut"
             }}
           >
-            <FiArrowDownCircle className="w-10 h-10" />
+            <FiChevronDown className="w-10 h-10" />
           </motion.div>
           {/* --- Fin: Flecha animada para scroll --- */}
 
@@ -161,7 +159,7 @@ const AboutPage = () => {
       </motion.section>
 
       {/* Our Story Section */}
-      <section className="py-20 md:py-32 bg-black">
+      <section className="py-20 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* --- Visual Element con Efecto Hover --- */}
@@ -177,16 +175,14 @@ const AboutPage = () => {
               onMouseLeave={() => setIsHoveringNetwork(false)}
             >
               {/* Contenedor principal */}
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-900/10 via-black to-purple-900/10 rounded-3xl border border-white/10 overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-5 scale-150"/>
-
+              <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 rounded-3xl border border-gray-200 overflow-hidden shadow-lg">
                 {/* SVG para las líneas y nodos */}
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 300 300">
                   {/* Definir el gradiente para las líneas */}
                   <defs>
                     <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="rgba(59, 130, 246, 0.8)" /> {/* Azul */}
-                      <stop offset="100%" stopColor="rgba(168, 85, 247, 0.8)" /> {/* Púrpura */}
+                      <stop offset="0%" stopColor="rgba(59, 130, 246, 0.6)" /> {/* Azul */}
+                      <stop offset="100%" stopColor="rgba(168, 85, 247, 0.6)" /> {/* Púrpura */}
                     </linearGradient>
                   </defs>
 
@@ -230,8 +226,8 @@ const AboutPage = () => {
                       <motion.circle
                         key={`node-circle-${i}`}
                         r="5"
-                        fill="rgba(255, 255, 255, 0.1)"
-                        stroke="rgba(255, 255, 255, 0.2)"
+                        fill="rgba(0, 0, 0, 0.05)"
+                        stroke="rgba(0, 0, 0, 0.1)"
                         strokeWidth="1"
                         initial={{ scale: 0, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -240,7 +236,7 @@ const AboutPage = () => {
                          {/* Brillo interno pulsante */}
                          <motion.circle
                            r="3"
-                           fill="white"
+                           fill="rgba(0, 0, 0, 0.3)"
                            initial={{ opacity: 0 }}
                            animate={{ opacity: [0, 0.8, 0] }}
                            transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 + 1 }}
@@ -254,7 +250,7 @@ const AboutPage = () => {
                 <motion.div
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    background: `radial-gradient(circle 300px at ${mousePosition.x}px ${mousePosition.y}px, rgba(255, 255, 255, 0.10), transparent)`,
+                    background: `radial-gradient(circle 300px at ${mousePosition.x}px ${mousePosition.y}px, rgba(0, 0, 0, 0.04), transparent)`,
                   }}
                   initial={{ opacity: 0 }}
                   animate={{ opacity: isHoveringNetwork ? 1 : 0 }}
@@ -270,14 +266,14 @@ const AboutPage = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.1 }}
             >
-              <span className="text-sm font-mono text-blue-400 mb-4 block">NUESTRA HISTORIA</span>
-              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-                Una idea <span className="text-blue-400">simple</span>,<br/> un impacto <span className="text-purple-400">real</span>.
+              <span className="text-sm font-mono text-blue-600 mb-4 block">NUESTRA HISTORIA</span>
+              <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight text-gray-900">
+                Una idea <span className="text-blue-600">simple</span>,<br/> un impacto <span className="text-purple-600">real</span>.
               </h2>
-              <p className="text-lg text-gray-400 mb-6">
+              <p className="text-lg text-gray-600 mb-6">
                 AlbirJobs nació para tejer una red de apoyo local usando la tecnología. Queremos revolucionar cómo los vecinos de El Albir encuentran trabajo y se ayudan mutuamente.
               </p>
-              <p className="text-lg text-gray-400">
+              <p className="text-lg text-gray-600">
                 ¿Necesitas contratar personal? ¿Buscas ayuda para una mudanza? ¿Quieres ofrecer tus habilidades? Aquí conectas directamente con quien necesitas, con solo unos clics. Facilitamos la vida diaria de unos mientras creamos oportunidades para otros.
               </p>
             </motion.div>
@@ -286,7 +282,7 @@ const AboutPage = () => {
       </section>
 
       {/* Core Values / How it Works */}
-      <section className="py-20 md:py-32 bg-gray-900/50 border-y border-white/10">
+      <section className="py-20 md:py-32 bg-gray-50 border-y border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <motion.h2 
@@ -294,7 +290,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8 }}
-              className="text-4xl md:text-5xl font-bold mb-6"
+              className="text-4xl md:text-5xl font-bold mb-6 text-gray-900"
             >
               Así Conectamos El Albir
             </motion.h2>
@@ -303,7 +299,7 @@ const AboutPage = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-xl text-gray-400"
+              className="text-xl text-gray-600"
             >
               Una plataforma simple para encontrar y ofrecer trabajo o ayuda local.
             </motion.p>
@@ -317,11 +313,11 @@ const AboutPage = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="bg-white/5 p-8 rounded-2xl border border-white/10 text-center"
+                className="bg-white p-8 rounded-2xl border border-gray-200 shadow-md text-center"
               >
-                <value.icon className="w-12 h-12 text-blue-400 mx-auto mb-6" />
-                <h3 className="text-xl font-semibold mb-3">{value.title}</h3>
-                <p className="text-gray-400 text-sm">{value.description}</p>
+                <value.icon className="w-12 h-12 text-blue-500 mx-auto mb-6" />
+                <h3 className="text-xl font-semibold mb-3 text-gray-900">{value.title}</h3>
+                <p className="text-gray-600 text-sm">{value.description}</p>
               </motion.div>
             ))}
           </div>
@@ -329,7 +325,7 @@ const AboutPage = () => {
       </section>
 
       {/* Grid Section - CONTENIDO ACTUALIZADO */}
-      <section className="py-20 md:py-32 bg-black">
+      <section className="py-20 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -338,8 +334,8 @@ const AboutPage = () => {
             transition={{ duration: 0.8 }}
             className="mb-16 text-center"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Más que Empleo</h2>
-            <p className="text-lg text-gray-400">Descubre cómo AlbirJobs fortalece nuestra comunidad</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Más que Empleo</h2>
+            <p className="text-lg text-gray-600">Descubre cómo AlbirJobs fortalece nuestra comunidad</p>
           </motion.div>
 
           {/* Contenedor de la Cuadrícula */}
@@ -357,7 +353,7 @@ const AboutPage = () => {
       </section>
 
       {/* Impact Section (Like Fast Facts) */}
-      <section className="py-20 md:py-32 bg-black">
+      <section className="py-20 md:py-32 bg-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-8 text-center">
             {fastFacts.map((fact, index) => (
@@ -368,10 +364,10 @@ const AboutPage = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: index * 0.2 }}
               >
-                <div className="text-6xl font-bold mb-3 bg-gradient-to-r from-blue-400 to-purple-400 text-transparent bg-clip-text">
+                <div className="text-6xl font-bold mb-3 bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">
                   {fact.value}
                 </div>
-                <p className="text-gray-400">{fact.label}</p>
+                <p className="text-gray-600">{fact.label}</p>
               </motion.div>
             ))}
           </div>
@@ -379,24 +375,23 @@ const AboutPage = () => {
       </section>
 
       {/* Join Us CTA */}
-      <section className="py-20 bg-gradient-to-t from-gray-900 to-black">
+      <section className="py-20 bg-gradient-to-t from-gray-100 to-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative bg-white/5 rounded-2xl p-12 border border-white/10 backdrop-blur-lg"
+            className="relative bg-white rounded-2xl p-12 border border-gray-200 shadow-xl"
           >
-             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 rounded-2xl blur-xl" />
              <div className="relative">
-              <h2 className="text-4xl font-bold mb-6">Únete a la Comunidad</h2>
-              <p className="text-xl text-gray-300 mb-8">
+              <h2 className="text-4xl font-bold mb-6 text-gray-900">Únete a la Comunidad</h2>
+              <p className="text-xl text-gray-600 mb-8">
                 Forma parte de la red que está haciendo de El Albir un lugar aún mejor para vivir y trabajar.
               </p>
               <button
                 onClick={login}
-                className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-500
+                className="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600
                   text-white rounded-full font-medium hover:opacity-90 transition-opacity transform hover:scale-105"
               >
                 Crear mi Cuenta / Acceder
