@@ -1,69 +1,114 @@
 "use client";
-import React, { createContext, useContext, ReactNode, useEffect } from "react";
+import React, { createContext, useContext, ReactNode, useEffect, useCallback, useState, useRef } from "react";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { Session } from "next-auth";
+import paths from "@/paths";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure } from "@nextui-org/react";
 
 type AuthContextType = {
   user: Session["user"] | null;
   loading: boolean;
+  isAuthenticated: boolean;
   login: () => void;
   logout: () => void;
 };
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: false,
+  loading: true,
+  isAuthenticated: false,
   login: () => {},
   logout: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const { data: session, status } = useSession();
-  console.log("SESSION: ", session);
+  const { isOpen: isExpiredModalOpen, onOpen: openExpiredModal, onClose: closeExpiredModal } = useDisclosure();
 
-  const login = () => signIn("google",{ callbackUrl: 'http://localhost:3000/jobs' });
-  const logout = () => {
-    signOut({ callbackUrl: "/" })
-      .then(() => {
-        sessionStorage.clear();
-        localStorage.clear();
-        document.cookie = "JSESSIONID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-        document.cookie = "XSRF-TOKEN=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-      });
-  };
+  const previousStatusRef = useRef<typeof status>(status);
+  const causedByManualLogoutRef = useRef(false);
 
   useEffect(() => {
-    if (status === "authenticated" && session?.expires) {
-      const checkSessionExpiry = () => {
-        const sessionExpiryTime = new Date(session.expires).getTime();
-        const currentTime = new Date().getTime();
-  
-        if (currentTime >= sessionExpiryTime) {
-          console.log("Session expired, logging out...");
-          logout();
-        } else {
-          console.log("Session is still valid");
-        }
-      };
-  
-      // Check every minute (60000 ms)
-      const intervalId = setInterval(checkSessionExpiry, 60000);
-      
-      // Run an initial check immediately
-      checkSessionExpiry();
-  
-      return () => clearInterval(intervalId);
+    console.log(`Auth Effect: Prev Status='${previousStatusRef.current}', Current Status='${status}', Manual Flag='${causedByManualLogoutRef.current}'`);
+
+    if (status === "unauthenticated" && previousStatusRef.current === "authenticated") {
+      console.log(`Transition auth -> unauth detected.`);
+      if (!causedByManualLogoutRef.current) {
+        console.log("Cause was NOT manual logout -> Opening expiration modal.");
+        openExpiredModal();
+      } else {
+        console.log("Cause WAS manual logout. Resetting flag.");
+        causedByManualLogoutRef.current = false;
+      }
+    } else if (status === "authenticated" && previousStatusRef.current !== "authenticated") {
+       console.log("User authenticated, ensuring manual logout flag is false.");
+       causedByManualLogoutRef.current = false;
     }
-  }, [status, session, logout]);
+
+    previousStatusRef.current = status;
+
+  }, [status, openExpiredModal]);
+
+  const performLogout = useCallback(() => {
+    console.log("Manual logout initiated...");
+    causedByManualLogoutRef.current = true;
+    signOut({ callbackUrl: paths.home() })
+      .catch(error => {
+          console.error("Error initiating sign out:", error);
+          causedByManualLogoutRef.current = false;
+      });
+  }, []);
+
+  const login = () => {
+    causedByManualLogoutRef.current = false;
+    signIn("google", { callbackUrl: paths.jobs() });
+  }
+
+  const handleRefresh = () => {
+    closeExpiredModal();
+    window.location.reload();
+  };
+
+  const isAuthenticated = status === "authenticated";
 
   const value = {
     user: session?.user ?? null,
     loading: status === "loading",
+    isAuthenticated,
     login,
-    logout,
+    logout: performLogout,
   };
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+
+      <Modal
+        isOpen={isExpiredModalOpen}
+        isDismissable={false}
+        hideCloseButton={true}
+        backdrop="blur"
+        placement="center"
+        onClose={() => console.log("Modal closed unexpectedly")}
+      >
+        <ModalContent>
+          <>
+            <ModalHeader className="flex flex-col gap-1 text-default-900">Sesión Expirada</ModalHeader>
+            <ModalBody>
+              <p className="text-default-700">
+                Tu sesión ha finalizado o se ha vuelto inválida. Por favor, refresca la página para continuar.
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button color="primary" onPress={handleRefresh}>
+                Refrescar Página
+              </Button>
+            </ModalFooter>
+          </>
+        </ModalContent>
+      </Modal>
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => useContext(AuthContext);

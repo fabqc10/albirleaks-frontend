@@ -1,38 +1,89 @@
+'use client';
+
 import React from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+// import AlbirLogo from './albirlogo'; // Comenta o elimina la importación antigua
+import NewAlbirLogo from './NewAlbirLogo'; // Importa el nuevo logo SVG
+import paths from '@/paths'; // Asegúrate que la ruta sea correcta
+import { FiMail, FiFacebook, FiTwitter, FiInstagram } from 'react-icons/fi'; // Importa iconos necesarios
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-blue-900 text-white py-8">
-      <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div className="text-center md:text-left">
-          <h3 className="text-xl font-semibold mb-2">Sobre Nosotros</h3>
-          <p>Somos una plataforma dedicada a conectar a la comunidad del Albir y alrededores, fomentando el crecimiento local y la colaboración.</p>
-        </div>
-        <div className="text-center">
-          <h3 className="text-xl font-semibold mb-2">Enlaces Rápidos</h3>
-          <ul className="space-y-2">
-            <li><a href="#" className="hover:underline">Inicio</a></li>
-            <li><a href="#" className="hover:underline">Servicios</a></li>
-            <li><a href="#" className="hover:underline">Contacto</a></li>
-            <li><a href="#" className="hover:underline">Política de Privacidad</a></li>
-          </ul>
-        </div>
-        <div className="text-center md:text-right">
-          <h3 className="text-xl font-semibold mb-2">Contáctanos</h3>
-          <p>Email: info@tuplataforma.com</p>
-          <p>Teléfono: +34 123 456 789</p>
-          <div className="flex justify-center md:justify-end space-x-4 mt-4">
-            <a href="#" className="hover:text-gray-300"><i className="fab fa-facebook-f"></i></a>
-            <a href="#" className="hover:text-gray-300"><i className="fab fa-twitter"></i></a>
-            <a href="#" className="hover:text-gray-300"><i className="fab fa-instagram"></i></a>
+    <motion.footer
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1, delay: 0.2 }} // Un pequeño delay para que aparezca después del contenido
+      className="bg-black border-t border-white/10 text-gray-400 mt-auto py-12" // Estilos mejorados: más padding, color de texto base
+    >
+      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+        {/* Layout en Grid para mejor estructura en pantallas grandes */}
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-10">
+
+          {/* Columna 1: Logo, Descripción y Contacto */}
+          <div className="space-y-4">
+            <Link href={paths.home()} className="inline-flex items-center gap-2 text-white hover:opacity-80 transition-opacity">
+              {/* Reemplaza AlbirLogo por NewAlbirLogo */}
+              <NewAlbirLogo width={28} height={28} /> {/* Tamaño ligeramente menor para el footer */}
+              <span className="text-lg font-semibold">AlbirJobs</span>
+            </Link>
+            <p className="text-sm">Conectando oportunidades y talento local en El Albir.</p>
+            {/* Email añadido */}
+            <div className="flex items-center gap-2 text-sm pt-2">
+              <FiMail className="w-4 h-4 text-blue-400 flex-shrink-0" />
+              <a href="mailto:contacto@albirjobs.com" className="hover:text-white transition-colors break-all">
+                contacto@albirjobs.com
+              </a>
+            </div>
           </div>
+
+          {/* Columna 2: Navegación Principal */}
+          <div className="md:justify-self-center"> {/* Centrado en pantallas medianas */}
+            <h3 className="text-sm font-semibold text-gray-200 mb-4 uppercase tracking-wider">Navegación</h3>
+            <ul className="space-y-3">
+              <li><Link href={paths.home()} className="text-sm hover:text-white transition-colors">Inicio</Link></li>
+              <li><Link href={paths.about()} className="text-sm hover:text-white transition-colors">Sobre Nosotros</Link></li>
+              <li><Link href={paths.jobs()} className="text-sm hover:text-white transition-colors">Buscar Empleo</Link></li>
+              <li><Link href={paths.myjobs()} className="text-sm hover:text-white transition-colors">Mis Anuncios</Link></li>
+              {/* Añade más enlaces si es necesario */}
+            </ul>
+          </div>
+
+          {/* Columna 3: Enlaces Legales */}
+          <div className="md:justify-self-center"> {/* Centrado en pantallas medianas */}
+            <h3 className="text-sm font-semibold text-gray-200 mb-4 uppercase tracking-wider">Legal</h3>
+            <ul className="space-y-3">
+              {/* Crea estas páginas si no existen */}
+              <li><Link href="/privacy" className="text-sm hover:text-white transition-colors">Política de Privacidad</Link></li>
+              <li><Link href="/terms" className="text-sm hover:text-white transition-colors">Términos de Servicio</Link></li>
+              <li><Link href="/cookies" className="text-sm hover:text-white transition-colors">Política de Cookies</Link></li>
+            </ul>
+          </div>
+
+          {/* Columna 4: Redes Sociales */}
+          <div className="lg:justify-self-end"> {/* Alineado a la derecha en pantallas grandes */}
+            <h3 className="text-sm font-semibold text-gray-200 mb-4 uppercase tracking-wider">Síguenos</h3>
+            {/* Iconos sociales */}
+            <div className="flex space-x-5">
+              {/* Reemplaza '#' con tus enlaces reales */}
+              <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors"><FiFacebook className="w-5 h-5" /></a>
+              <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors"><FiTwitter className="w-5 h-5" /></a>
+              <a href="#" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-gray-400 hover:text-white transition-colors"><FiInstagram className="w-5 h-5" /></a>
+              {/* Añade más redes si es necesario */}
+            </div>
+          </div>
+
+        </div>
+
+        {/* Separador y Copyright */}
+        <div className="mt-10 pt-8 border-t border-white/10 text-center text-sm">
+          <p>&copy; {currentYear} AlbirJobs. Todos los derechos reservados.</p>
         </div>
       </div>
-      <div className="text-center mt-8">
-        <p>© 2024 AlbirLeaks. Todos los derechos reservados.</p>
-      </div>
-    </footer>
+    </motion.footer>
   );
-}
+};
 
 export default Footer;

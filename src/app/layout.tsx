@@ -3,6 +3,9 @@ import { Plus_Jakarta_Sans, Inter } from "next/font/google";
 import "@/styles/globals.css";
 import Providers from "./providers";
 import Header from "@/app/components/header";
+import Footer from "./components/footer";
+import { AuthProvider } from "./contexts/auth.context";
+import { JobsProvider } from "./contexts/jobs.context";
 
 const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -32,10 +35,17 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body>
+      <body className={`${inter.className} bg-black text-white flex flex-col min-h-screen`}>
         <Providers>
-          <Header />
-          {children}
+          <AuthProvider>
+            <JobsProvider>
+              <Header />
+              <main className="flex-grow">
+                {children}
+              </main>
+              <Footer />
+            </JobsProvider>
+          </AuthProvider>
         </Providers>
       </body>
     </html>

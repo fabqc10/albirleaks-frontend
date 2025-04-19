@@ -6,7 +6,9 @@ import {
   FiArrowRight, FiHeart, FiUsers, FiMapPin, FiBriefcase,
   FiRefreshCw,
   FiHome,
-  FiTrash2
+  FiTrash2,
+  FiChevronDown,
+  FiArrowDownCircle
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/auth.context';
 
@@ -120,7 +122,7 @@ const AboutPage = () => {
             <p className="text-xl md:text-2xl text-gray-300 mb-10">
               AlbirJobs es tu solución local cuando necesitas encontrar trabajo o ayuda en El Albir. Nuestra plataforma conecta en tiempo real a vecinos que buscan u ofrecen empleo, servicios o asistencia para tareas cotidianas.
             </p>
-            <div className="flex justify-center gap-4">
+            <div className="flex justify-center gap-4 mb-20">
               <Link 
                 href="/jobs"
                 className="group relative inline-flex items-center justify-center px-6 py-3 bg-white text-black rounded-full
@@ -135,6 +137,26 @@ const AboutPage = () => {
               </Link>
             </div>
           </motion.div>
+
+          {/* --- Inicio: Flecha animada (Chevron) para scroll --- */}
+        
+          <motion.div
+            className="absolute top-78 left-1/2 -translate-x-1/2 text-gray-400"
+            animate={{
+              y: [0, 6, 0],
+              opacity: [0.8, 0.4, 0.8]
+            }}
+            transition={{
+              duration: 1.8,
+              repeat: Infinity,
+              repeatType: 'loop',
+              ease: "easeInOut"
+            }}
+          >
+            <FiArrowDownCircle className="w-10 h-10" />
+          </motion.div>
+          {/* --- Fin: Flecha animada para scroll --- */}
+
         </div>
       </motion.section>
 
