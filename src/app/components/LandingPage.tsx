@@ -1,97 +1,144 @@
 'use client';
 import React from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FiBriefcase, FiUsers, FiMap, FiArrowRight } from 'react-icons/fi';
+import { FiArrowRight, FiSearch, FiSend, FiCheckCircle } from 'react-icons/fi';
+
+// Componente simple para los pasos
+const StepCard = ({ icon: Icon, title, description, delay }: { icon: React.ElementType, title: string, description: string, delay: number }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true, amount: 0.5 }}
+    transition={{ duration: 0.6, delay }}
+    className="text-center p-6 bg-white/[0.03] rounded-2xl border border-white/10"
+  >
+    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 mb-4">
+      <Icon className="w-6 h-6 text-blue-300" />
+    </div>
+    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
+    <p className="text-sm text-gray-400">{description}</p>
+  </motion.div>
+);
 
 const LandingPage = () => {
   return (
-    <div className="w-full overflow-hidden">
-      {/* Hero Section */}
-      <section className="relative h-screen bg-gradient-to-br from-blue-900 via-blue-800 to-indigo-900">
-        <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-20" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/20 to-transparent" />
-        
-        <div className="relative z-20 h-full flex items-center justify-center text-center">
+    <div className="w-full overflow-x-hidden bg-black text-white">
+      {/* Hero Section - Layout Asimétrico */}
+      <section className="relative min-h-screen flex items-center overflow-hidden">
+        {/* Fondo con gradientes y elementos flotantes */}
+        <div className="absolute inset-0 -z-10">
+          <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/80 to-black" />
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="space-y-8 px-4 max-w-4xl"
+            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
+            transition={{ duration: 15, repeat: Infinity, repeatType: 'reverse' }}
+            className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-blue-700/30 rounded-full blur-[150px]"
+          />
+          <motion.div
+            animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
+            transition={{ duration: 18, repeat: Infinity, repeatType: 'reverse', delay: 3 }}
+            className="absolute bottom-[-20%] right-[-15%] w-[50vw] h-[50vw] bg-purple-700/30 rounded-full blur-[130px]"
+          />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
+          {/* Contenido de Texto */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.1 }}
+            className="text-center lg:text-left"
           >
-            <h1 className="text-5xl md:text-7xl font-bold text-white leading-tight">
-              Encuentra trabajo en
-              <span className="block bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-emerald-400">
-                El Albir
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
+              Trabajo y Ayuda
+              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+                a tu alcance
               </span>
             </h1>
-            <p className="text-xl text-blue-100 max-w-2xl mx-auto">
-              La plataforma que conecta el talento local con las mejores oportunidades laborales
+            <p className="text-xl text-gray-300 mb-10 max-w-xl">
+              La forma más rápida y directa de encontrar oportunidades o publicar tus necesidades en El Albir.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link 
+            <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+              <Link
                 href="/jobs"
-                className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-900 rounded-full 
-                  text-lg font-medium hover:bg-blue-50 transition-all transform hover:scale-105"
+                className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-black rounded-full
+                  text-lg font-medium overflow-hidden transition-all duration-300 hover:scale-105 shadow-lg shadow-white/10"
               >
-                Explorar trabajos
-                <FiArrowRight className="ml-2" />
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0
+                    group-hover:opacity-100 transition-opacity duration-300" />
+                <span className="relative group-hover:text-white transition-colors">
+                  Ver Anuncios
+                  <FiArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
+                </span>
               </Link>
-              <Link 
-                href="/myjobs"
-                className="inline-flex items-center justify-center px-8 py-4 bg-blue-700/30 text-white 
-                  rounded-full text-lg font-medium border-2 border-white/20 hover:bg-blue-700/50 
-                  transition-all backdrop-blur-sm"
+              {/* Botón secundario podría ser para publicar, usar lógica de auth si es necesario */}
+              <Link
+                href="/myjobs" // O link a login si no está autenticado
+                className="inline-flex items-center justify-center px-8 py-4 rounded-full text-lg
+                  font-medium text-white border border-white/20 hover:bg-white/10 transition-all backdrop-blur-sm"
               >
-                Publicar anuncio
+                Publicar Ahora
               </Link>
             </div>
+          </motion.div>
+
+          {/* Visual Animado (Placeholder - puede ser más complejo) */}
+          <motion.div
+             initial={{ opacity: 0, scale: 0.8 }}
+             animate={{ opacity: 1, scale: 1 }}
+             transition={{ duration: 0.8, delay: 0.3 }}
+             className="hidden lg:block relative h-[450px]"
+          >
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl border border-white/10 backdrop-blur-xl">
+                  {/* Mock UI sutil */}
+                  <div className="absolute top-8 left-8 w-3/4 h-4 bg-white/10 rounded"></div>
+                  <div className="absolute top-16 left-8 w-1/2 h-3 bg-white/5 rounded"></div>
+                  <div className="absolute bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+              </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-6xl mx-auto px-4">
-          <motion.div 
+      {/* How it Works Section */}
+      <section className="py-20 md:py-32 bg-gradient-to-b from-black to-gray-900/70 border-t border-white/5">
+        <div className="max-w-5xl mx-auto px-6">
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-center mb-16"
+            className="mb-16 text-center"
           >
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              ¿Por qué elegir AlbirJobs?
-            </h2>
-            <p className="text-xl text-gray-600">
-              Una plataforma diseñada pensando en la comunidad local
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Así de Sencillo</h2>
+            <p className="text-lg text-gray-400">Conecta con tu comunidad en 3 simples pasos.</p>
           </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {features.map((feature, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-2xl hover:shadow-lg transition-all"
-              >
-                <feature.icon className="w-12 h-12 text-blue-600 mb-6" />
-                <h3 className="text-xl font-semibold text-gray-900 mb-4">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </motion.div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <StepCard
+              icon={FiSearch}
+              title="1. Busca o Publica"
+              description="Encuentra trabajos, servicios o ayuda cerca de ti, o publica tu necesidad en segundos."
+              delay={0.1}
+            />
+            <StepCard
+              icon={FiSend}
+              title="2. Conecta Directo"
+              description="Comunícate directamente con otros vecinos a través de la plataforma, sin intermediarios."
+              delay={0.3}
+            />
+            <StepCard
+              icon={FiCheckCircle}
+              title="3. Resuelve y Colabora"
+              description="Acuerda los detalles y completa el trabajo o la ayuda. ¡Fortalece El Albir!"
+              delay={0.5}
+            />
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="relative py-24 bg-gradient-to-br from-blue-900 to-indigo-900">
-        <div className="absolute inset-0 bg-[url('/assets/grid.svg')] opacity-10" />
-        <div className="relative z-10 max-w-4xl mx-auto px-6 text-center">
+      {/* CTA Section Final (Puede ser similar a About o más simple) */}
+      <section className="py-24 bg-black">
+        <div className="max-w-3xl mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -99,18 +146,19 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Comienza tu búsqueda hoy
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+              ¿Listo para Conectar?
             </h2>
-            <p className="text-xl text-blue-100 mb-8">
-              Únete a la comunidad laboral más grande de El Albir
+            <p className="text-xl text-gray-300 mb-8">
+              Únete a la red de vecinos de El Albir hoy mismo.
             </p>
-            <Link 
-              href="/register"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-900 
-                rounded-full text-lg font-medium hover:bg-blue-50 transition-all transform hover:scale-105"
+            <Link
+              href="/api/auth/signin" // Ajusta la ruta de login
+              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500
+                text-white rounded-full text-lg font-medium hover:opacity-90 transition-opacity transform hover:scale-105 shadow-lg shadow-blue-500/30"
             >
-              Crear cuenta gratuita
+              Crear Cuenta / Acceder
+              <FiArrowRight className="ml-2" />
             </Link>
           </motion.div>
         </div>
@@ -118,23 +166,5 @@ const LandingPage = () => {
     </div>
   );
 };
-
-const features = [
-  {
-    icon: FiBriefcase,
-    title: "Oportunidades Locales",
-    description: "Encuentra trabajo cerca de ti, en tu propia comunidad."
-  },
-  {
-    icon: FiUsers,
-    title: "Conexión Directa",
-    description: "Contacta directamente con empleadores y candidatos sin intermediarios."
-  },
-  {
-    icon: FiMap,
-    title: "100% El Albir",
-    description: "Una plataforma exclusiva para nuestra comunidad local."
-  }
-];
 
 export default LandingPage; 

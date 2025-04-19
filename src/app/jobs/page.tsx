@@ -1,99 +1,80 @@
 "use client";
 
 import { JobsContext } from "@/app/contexts/jobs.context";
-import { useContext, useState } from "react";
+import { useContext, useState, useMemo } from "react";
 import JobCard from "../components/jobCard";
+import { motion } from 'framer-motion';
+import { FiSearch, FiBriefcase } from 'react-icons/fi';
 
 const JobsPage = () => {
   const { jobs } = useContext(JobsContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState("all");
 
-  const filteredJobs = jobs.filter(job => 
+  const filteredJobs = useMemo(() => jobs.filter(job =>
     job.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    job.jobDescription.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    job.jobDescription.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    job.location.toLowerCase().includes(searchTerm.toLowerCase())
+  ), [jobs, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto p-6">
-        {/* Header Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-800">Tablón de Anuncios</h1>
-          <p className="text-gray-600 mt-2">Explora las últimas oportunidades laborales en El Albir</p>
-        </div>
+    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white">
+       {/* Efecto de fondo */}
+       <div className="fixed inset-0 bg-[url('/assets/grid.svg')] opacity-[0.05] -z-10" />
 
-        {/* Search and Filter Bar */}
-        <div className="bg-white p-4 rounded-xl shadow-sm mb-8">
-          <div className="flex flex-col md:flex-row gap-4">
-            <input 
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        {/* Cabecera */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Encuentra tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Oportunidad</span>
+          </h1>
+          <p className="text-lg text-gray-400">Explora los últimos anuncios en El Albir</p>
+        </motion.div>
+
+        {/* Barra de Búsqueda */}
+        <motion.div
+           initial={{ opacity: 0, y: 20 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ delay: 0.2, duration: 0.6 }}
+           className="mb-12 max-w-2xl mx-auto"
+        >
+          <div className="relative">
+            <input
               type="search"
-              placeholder="Buscar por título o descripción..."
-              className="flex-1 px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Buscar por puesto, empresa, ubicación..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm"
             />
-            <select 
-              className="px-4 py-2 rounded-lg border border-gray-200 text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={filter}
-              onChange={(e) => setFilter(e.target.value)}
-            >
-              <option value="all">Todas las categorías</option>
-              <option value="recent">Más recientes</option>
-              <option value="featured">Destacados</option>
-            </select>
+            <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
-        </div>
+          {/* Aquí podrías añadir filtros más avanzados si los tienes */}
+        </motion.div>
 
-        {/* Jobs Grid */}
+        {/* Listado de Trabajos */}
         {filteredJobs.length === 0 ? (
-          <div className="text-center py-16 bg-white rounded-xl shadow-sm">
-            <div className="mb-4 text-gray-400">
-              <svg className="w-16 h-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-            </div>
-            <h2 className="text-xl font-semibold text-gray-800 mb-2">
-              No se encontraron anuncios
-            </h2>
-            <p className="text-gray-600">
-              Intenta con otros términos de búsqueda
-            </p>
-          </div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center py-16 text-gray-500"
+          >
+            <FiBriefcase className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <p>No se encontraron anuncios que coincidan con tu búsqueda.</p>
+          </motion.div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredJobs.map((job) => (
-              <div
-                key={job.jobId}
-                className="transform hover:-translate-y-1 transition-all duration-200"
-              >
-                <JobCard job={job} showActions={false}/>
-              </div>
+              <JobCard key={job.jobId} job={job} showActions={false}/> // showActions={false} para la vista pública
             ))}
           </div>
         )}
-
-        {/* Stats Bar */}
-        <div className="mt-8 bg-white p-4 rounded-xl shadow-sm">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-            <div>
-              <p className="text-2xl font-bold text-gray-800">{jobs.length}</p>
-              <p className="text-gray-500 text-sm">Total Anuncios</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-blue-600">{filteredJobs.length}</p>
-              <p className="text-gray-500 text-sm">Resultados</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-green-600">24h</p>
-              <p className="text-gray-500 text-sm">Últimas 24h</p>
-            </div>
-            <div>
-              <p className="text-2xl font-bold text-purple-600">Local</p>
-              <p className="text-gray-500 text-sm">El Albir</p>
-            </div>
-          </div>
-        </div>
+         {/* Podrías añadir paginación aquí si tienes muchos trabajos */}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
@@ -10,108 +10,71 @@ import {
 } from 'react-icons/fi';
 import { useAuth } from '../contexts/auth.context';
 
-// Componente reutilizable para las tarjetas del carrusel
-const CarouselCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
+// Componente reutilizable para las tarjetas - VISUAL ACTUALIZADO
+const FeatureCard = ({ icon: Icon, title, description }: { icon: React.ElementType, title: string, description: string }) => (
   <motion.div
-    className="relative flex-shrink-0 w-[300px] md:w-[350px] h-[380px] bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 overflow-hidden group scroll-snap-center md:scroll-snap-start"
-    whileHover={{ scale: 1.03 }}
+    className="relative h-[380px] bg-white/5 backdrop-blur-lg rounded-2xl border border-white/10 p-8 overflow-hidden group"
+    whileHover={{ scale: 1.03, zIndex: 10 }}
     transition={{ type: 'spring', stiffness: 300 }}
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
+    viewport={{ once: true, amount: 0.3 }}
   >
+    {/* Efecto hover gradiente */}
     <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-purple-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+    {/* Icono grande de fondo - MÁS GRANDE Y VISIBLE */}
+    <Icon className="absolute z-0 -bottom-10 -right-10 w-40 h-40 text-white/[0.03] transform group-hover:scale-115 group-hover:rotate-[-12deg] transition-transform duration-500 ease-out" />
+
+    {/* Contenido principal */}
     <div className="relative z-10 flex flex-col h-full">
       <Icon className="w-10 h-10 text-blue-400 mb-6" />
       <h3 className="text-xl font-semibold text-white mb-4">{title}</h3>
       <p className="text-gray-400 text-sm flex-grow">{description}</p>
-      <Link href="#" className="inline-flex items-center text-sm text-blue-400 group-hover:text-white transition-colors mt-4">
+      <Link href="#" className="inline-flex items-center text-sm text-blue-400 group-hover:text-white transition-colors mt-4 self-start">
         Saber más <FiArrowRight className="ml-1 group-hover:translate-x-1 transition-transform" />
       </Link>
     </div>
   </motion.div>
 );
 
-// Datos para el carrusel
-const carouselItems = [
+// Datos para las tarjetas - TEXTO ACTUALIZADO
+const featureItems = [
   {
     icon: FiBriefcase,
-    title: "Conexión Laboral",
-    description: "El corazón de AlbirJobs. Facilitamos la búsqueda y publicación de empleos locales, conectando talento y empresas en El Albir."
+    title: "Conexión Laboral Directa", // Texto ligeramente ajustado
+    description: "Publica ofertas o encuentra tu próximo empleo local. Conectamos talento y empresas directamente en El Albir, sin intermediarios." // Texto complementado
   },
   {
     icon: FiRefreshCw,
-    title: "Economía Circular",
-    description: "Fomentamos la reutilización. Conecta con vecinos para dar una segunda vida a objetos o encontrar tesoros de segunda mano."
+    title: "Impulso a la Economía Circular", // Texto ligeramente ajustado
+    description: "Dale una nueva vida a tus objetos. Ofrece o encuentra artículos de segunda mano entre vecinos, reduciendo residuos y fomentando el consumo consciente." // Texto complementado
   },
   {
     icon: FiHome,
-    title: "Apoyando El Albir",
-    description: "Menos viajes innecesarios. Al conectar vecinos para tareas y servicios, reducimos el tráfico y fortalecemos la comunidad."
+    title: "Fortaleciendo El Albir", // Texto ligeramente ajustado
+    description: "Menos desplazamientos, más comunidad. Facilitamos servicios y tareas entre vecinos, creando una red de apoyo local más fuerte y sostenible." // Texto complementado
   },
   {
     icon: FiTrash2,
-    title: "Reciclaje Responsable",
-    description: "Facilitamos la ayuda para llevar tus residuos al punto limpio correcto, promoviendo un El Albir más sostenible."
+    title: "Gestión Sostenible de Residuos", // Texto ligeramente ajustado
+    description: "Coordina fácilmente la recogida y el transporte de reciclaje o enseres al punto limpio. Una forma sencilla de contribuir a un Albir más limpio." // Texto complementado
   },
+  // Puedes añadir más tarjetas aquí si quieres llegar a 6 como Apple
+  // {
+  //   icon: FiHeart,
+  //   title: "Ayuda Vecinal",
+  //   description: "Encuentra o ofrece ayuda para pequeñas tareas del día a día, fortaleciendo los lazos comunitarios."
+  // },
+  // {
+  //   icon: FiUsers,
+  //   title: "Red Profesional",
+  //   description: "Conecta con otros profesionales y empresas locales para colaboraciones y networking."
+  // },
 ];
 
 const AboutPage = () => {
   const { login } = useAuth();
-  const carouselWrapperRef = useRef<HTMLDivElement>(null);
-  const carouselContentRef = useRef<HTMLDivElement>(null);
-  const [dragConstraintLeft, setDragConstraintLeft] = useState(0);
-
-  useEffect(() => {
-    const calculateConstraints = () => {
-      if (carouselContentRef.current && carouselWrapperRef.current) {
-        // Usamos offsetWidth del wrapper (ancho total visible incluyendo padding)
-        const wrapperOffsetWidth = carouselWrapperRef.current.offsetWidth;
-        // Usamos scrollWidth del contenido (ancho total de las tarjetas + gaps)
-        const contentScrollWidth = carouselContentRef.current.scrollWidth;
-
-        // El límite izquierdo es la diferencia negativa, asegurando que no sea positivo
-        // Si el contenido es más pequeño o igual al wrapper, el límite es 0
-        const newConstraint = Math.min(0, wrapperOffsetWidth - contentScrollWidth);
-
-        // Solo actualiza si el valor cambia
-        if (newConstraint !== dragConstraintLeft) {
-            setDragConstraintLeft(newConstraint);
-        }
-        // console.log(`Wrapper offsetWidth: ${wrapperOffsetWidth}, Content scrollWidth: ${contentScrollWidth}, Constraint: ${newConstraint}`); // Debug
-      }
-    };
-
-    // Observar cambios de tamaño en ambos elementos
-    const wrapperObserver = new ResizeObserver(calculateConstraints);
-    const contentObserver = new ResizeObserver(calculateConstraints);
-
-    const wrapperElement = carouselWrapperRef.current;
-    const contentElement = carouselContentRef.current;
-
-    if (wrapperElement) {
-      wrapperObserver.observe(wrapperElement);
-    }
-    if (contentElement) {
-      contentObserver.observe(contentElement);
-    }
-
-    // Cálculo inicial
-    calculateConstraints();
-
-    return () => {
-      // Limpiar observers al desmontar
-      if (wrapperElement) {
-        wrapperObserver.unobserve(wrapperElement);
-      }
-      if (contentElement) {
-        contentObserver.unobserve(contentElement);
-      }
-      wrapperObserver.disconnect();
-      contentObserver.disconnect();
-    };
-  }, [dragConstraintLeft]); // Dependencia para evitar bucles si se actualiza estado
-
   const baseNodes = [
     { x: 50, y: 70 }, { x: 250, y: 50 }, { x: 150, y: 150 },
     { x: 70, y: 250 }, { x: 230, y: 240 }
@@ -343,28 +306,24 @@ const AboutPage = () => {
         </div>
       </section>
 
-      {/* Carousel Section - Reimplementada con CSS Scroll Snap */}
+      {/* Grid Section - CONTENIDO ACTUALIZADO */}
       <section className="py-20 md:py-32 bg-black">
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="mb-16 text-center px-6"
+            className="mb-16 text-center"
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Más que Empleo</h2>
             <p className="text-lg text-gray-400">Descubre cómo AlbirJobs fortalece nuestra comunidad</p>
           </motion.div>
 
-          {/* Contenedor Scrollable con Snap */}
-          <div
-            className="flex overflow-x-auto gap-6 pb-8 px-6 md:px-8
-                       scroll-smooth snap-x snap-mandatory
-                       scrollbar-hide"
-          >
-            {carouselItems.map((item, index) => (
-              <CarouselCard
+          {/* Contenedor de la Cuadrícula */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {featureItems.map((item, index) => (
+              <FeatureCard
                 key={index}
                 icon={item.icon}
                 title={item.title}
@@ -372,10 +331,6 @@ const AboutPage = () => {
               />
             ))}
           </div>
-           {/* Indicador visual de scroll (opcional) */}
-           <div className="text-center text-gray-500 text-sm mt-4 hidden md:block">
-             Desliza para ver más →
-      </div>
         </div>
       </section>
 
