@@ -99,6 +99,7 @@ const JobCreateForm = () => {
                     {...register("jobDescription", { required: "Descripción es requerida" })}
                     label="Descripción del Puesto"
                     labelPlacement="outside"
+                    maxLength={5000}
                     placeholder="Detalla las responsabilidades, requisitos, contacto, etc."
                     variant="bordered"
                     minRows={4}
