@@ -11,6 +11,9 @@ const paths = {
   myjobs() {
     return "/myjobs";
   },
+  chat() {
+    return "/chat";
+  },
 };
 
 export default paths;

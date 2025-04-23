@@ -22,7 +22,8 @@ const Header = () => {
     { href: paths.home(), label: 'Inicio' },
     { href: paths.about(), label: 'Sobre Nosotros' },
     { href: paths.jobs(), label: 'Buscar Empleo' },
-    ...(user ? [{ href: paths.myjobs(), label: 'Mis Anuncios' }] : []),
+    ...(isAuthenticated ? [{ href: paths.myjobs(), label: 'Mis Anuncios' }] : []),
+    ...(isAuthenticated ? [{ href: paths.chat(), label: 'Chat' }] : []),
   ];
 
   return (
