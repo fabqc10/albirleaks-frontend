@@ -2,6 +2,15 @@
 const nextConfig = {
     images: {
       domains: ['a.storyblok.com','alicanteout.com','costablanca-anglicanchaplaincy.org','alfas.es','cdn.pixabay.com'], 
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: 'lh3.googleusercontent.com',
+          port: '', // Dejar vacío para cualquier puerto (o omitir)
+          pathname: '/a/**', // Ajustar si las URLs tienen un patrón específico
+        },
+        // ... puedes añadir otros dominios aquí si los necesitas ...
+      ],
     },
     async rewrites() {
         return {
