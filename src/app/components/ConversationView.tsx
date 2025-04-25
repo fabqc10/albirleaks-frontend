@@ -52,7 +52,7 @@ export default function ConversationView() {
     } = useChat();
 
     const { data: session } = useSession();
-    const currentUserId = session?.user?.id; // Verifica que esto trae el UUID
+    const currentUserDbId = (session?.user as any)?.dbId;
 
     const [newMessage, setNewMessage] = useState('');
     const [focusTrigger, setFocusTrigger] = useState(0); // <-- Estado para trigger
@@ -61,7 +61,7 @@ export default function ConversationView() {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const currentConversation = conversations.find(c => c.id === selectedConversationId);
-    const otherParticipant = currentConversation?.participants.find(p => p.id !== currentUserId);
+    const otherParticipant = currentConversation?.participants.find(p => p.id !== currentUserDbId);
 
     // Efecto para devolver el foco al input cuando focusTrigger cambia
     useEffect(() => {
@@ -106,7 +106,7 @@ export default function ConversationView() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newMessage.trim() || isSendingMessage || !currentUserId) return;
+        if (!newMessage.trim() || isSendingMessage) return;
         try {
             await sendMessageToConversation(newMessage);
             setNewMessage('');
@@ -148,13 +148,16 @@ export default function ConversationView() {
                  {!hasMoreMessages && currentMessages.length > 0 && <div className="text-center text-xs text-gray-400 pt-2 pb-3">Inicio de la conversación</div>}
 
                 {/* Mensajes */} 
-                {currentMessages.map((msg) => (
-                   <MessageBubble
-                       key={msg.id}
-                       message={msg}
-                       isSender={msg.sender?.id === currentUserId} // Verifica que currentUserId sea el UUID!
-                   />
-               ))}
+                {currentMessages.map((msg) => {
+                    const isSender = !!currentUserDbId && msg.sender?.id === currentUserDbId;
+                    return (
+                        <MessageBubble
+                           key={msg.id}
+                           message={msg}
+                           isSender={isSender}
+                       />
+                    );
+                })}
                {errorMessages && <div className="text-center text-red-500 text-sm p-2">Error: {errorMessages}</div>}
                <div ref={messagesEndRef} style={{ height: '1px' }} /> {/* Para scroll al final */} 
             </div>
