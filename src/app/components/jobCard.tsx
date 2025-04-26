@@ -42,11 +42,11 @@ const JobCard = ({ job, onDelete, showActions = true }: JobCardProps) => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   // Contextos y hooks
-  const { user: currentUser } = useAuth(); // Para saber si el usuario actual es el dueño
-  const { data: session, status: sessionStatus } = useSession(); // <-- OBTENER SESIÓN Y STATUS
-  const { initiateChat } = useChat(); // <-- OBTENER FUNCIÓN DEL CONTEXTO CHAT
+  // const { user: currentUser } = useAuth(); // Ya no necesitamos currentUser del AuthContext aquí
+  const { data: session, status: sessionStatus } = useSession(); 
+  const { initiateChat } = useChat(); 
   const router = useRouter();
-  const [isContacting, setIsContacting] = useState(false); // Estado local para el botón
+  const [isContacting, setIsContacting] = useState(false);
 
   const handleDelete = () => {
     if (onDelete && window.confirm(`¿Seguro que quieres eliminar el anuncio "${jobTitle}"?`)) {
@@ -61,60 +61,51 @@ const JobCard = ({ job, onDelete, showActions = true }: JobCardProps) => {
   useEffect(() => {
     const element = descriptionRef.current;
     if (element) {
-      // Simple re-check on description change
       const checkClamp = () => {
           const hasClamp = element.scrollHeight > element.clientHeight;
           setIsClamped(hasClamp);
       };
-      // Check initially and maybe on resize if needed
       checkClamp();
-      window.addEventListener('resize', checkClamp); // Example listener
+      window.addEventListener('resize', checkClamp);
       return () => window.removeEventListener('resize', checkClamp);
     }
-    return () => setIsClamped(false); // Cleanup
-  }, [jobDescription]); // Re-run if description changes
+    return () => setIsClamped(false);
+  }, [jobDescription]);
 
   // Lógica para mostrar botón Contactar
-  // Asegúrate que currentUser?.id y owner?.userId son comparables (ambos string)
-  const isOwner = owner?.userId && currentUser?.id === owner.userId;
+  // *** OBTENER dbId DEL USUARIO ACTUAL DESDE LA SESIÓN ***
+  // Usamos 'as any' porque TS puede no reconocer el tipo extendido directamente
+  const currentUserDbId = (session?.user as any)?.dbId; 
+
+  // *** COMPARAR owner.userId (UUID) con currentUserDbId (UUID) ***
+  const isOwner = owner?.userId && currentUserDbId === owner.userId;
+  
   const canContact = sessionStatus === 'authenticated' && !isOwner;
   const isLoadingSession = sessionStatus === 'loading';
 
-
   const handleContact = async () => {
-    // Verificar si se puede contactar (ya incluye la verificación de autenticado)
     if (!canContact) {
         console.log("[JobCard] handleContact: Preconditions not met (not authenticated or is owner).");
-        toast.error('No puedes contactar para este anuncio.'); // Mensaje genérico o más específico
+        toast.error('No puedes contactar para este anuncio.'); 
         return;
     }
-
-    // Obtener el token de la sesión (ahora sabemos que status es 'authenticated')
     const token = session?.idToken ?? null;
     console.log("[JobCard] handleContact: Token read from session:", token);
-
-    // Verificar que el token exista (crucial)
     if (!token) {
         console.error("[JobCard] handleContact: Token is null/undefined even though status is authenticated.");
         toast.error('Error de autenticación temporal. Inténtalo de nuevo.');
         return;
     }
-
     console.log(`[JobCard] Calling initiateChat from context for jobId: ${jobId}`);
-    setIsContacting(true); // Indicar carga
-
+    setIsContacting(true);
     try {
-        // <-- IMPORTANTE: Pasar jobId y token a la función del contexto
         const conversationId = await initiateChat(jobId, token);
-
         if (conversationId !== null) {
             console.log(`[JobCard] Context call successful (ID: ${conversationId}). Navigating.`);
             toast.success('Chat iniciado/encontrado. Redirigiendo...');
-            // Navegar a la página de chat, idealmente seleccionando la conversación
-            router.push(paths.chat()); // Podrías añadir #convId o similar si tu ChatPage lo soporta
+            router.push(paths.chat());
         } else {
              console.log("[JobCard] Context initiateChat returned null (error handled in context).");
-             // El contexto ya debería haber puesto un error en su estado si procede
              toast.error('No se pudo iniciar el chat.');
         }
     } catch (error) {
@@ -126,7 +117,7 @@ const JobCard = ({ job, onDelete, showActions = true }: JobCardProps) => {
             toast.error(`Error al contactar: ${error instanceof Error ? error.message : 'Error desconocido'}`);
          }
     } finally {
-        setIsContacting(false); // Quitar estado de carga
+        setIsContacting(false);
     }
   };
 
@@ -153,10 +144,11 @@ const JobCard = ({ job, onDelete, showActions = true }: JobCardProps) => {
              {isExpired && (
                 <span className="flex-shrink-0 px-2 py-0.5 bg-red-100 text-red-700 text-xs rounded-full font-medium">Expirado</span>
              )}
-             {!isExpired && showActions && !isOwner && ( // Muestra activo si no es dueño
+             {/* --- Lógica de Badge actualizada para usar isOwner corregido --- */}
+             {!isExpired && showActions && !isOwner && (
                 <span className="flex-shrink-0 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full font-medium">Activo</span>
              )}
-              {!isExpired && showActions && isOwner && ( // O muestra 'Tuyo' si es el dueño
+              {!isExpired && showActions && isOwner && (
                 <span className="flex-shrink-0 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs rounded-full font-medium">Tuyo</span>
              )}
            </div>
@@ -196,28 +188,27 @@ const JobCard = ({ job, onDelete, showActions = true }: JobCardProps) => {
         {/* Sección de Acciones (Footer) */}
         <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-gray-200 bg-gray-50">
           <div className="flex-grow">
-             {/* Mostrar botón Contactar solo si se cumplen las condiciones */}
+             {/* --- Botón Contactar usa canContact (que depende de isOwner corregido) --- */}
             {canContact && (
               <Button
                 color="primary"
                 variant="flat"
                 size="sm"
                 startContent={<FiMessageSquare className="w-4 h-4" />}
-                onPress={handleContact} // Llama a la función corregida
-                isLoading={isContacting || isLoadingSession} // Muestra loading si está contactando o cargando sesión
-                isDisabled={isContacting || isLoadingSession} // Deshabilita en ambos casos
+                onPress={handleContact}
+                isLoading={isContacting || isLoadingSession}
+                isDisabled={isContacting || isLoadingSession}
                 className="hover:bg-blue-100 text-blue-600"
               >
                 {isContacting ? 'Iniciando...' : (isLoadingSession ? 'Cargando...' : 'Contactar')}
               </Button>
             )}
-            {/* Mostrar mensaje si no está autenticado y no es el dueño */}
             {sessionStatus === 'unauthenticated' && !isOwner && (
                  <span className="text-xs text-gray-500 italic">Inicia sesión para contactar</span>
             )}
           </div>
 
-           {/* Mostrar acciones de edición/borrado solo si es el dueño */}
+           {/* --- Acciones de Edición/Borrado usan isOwner corregido --- */}
           {showActions && isOwner && onDelete && (
             <div className="flex items-center justify-end gap-2 flex-shrink-0">
               <JobUpdateForm job={job} />

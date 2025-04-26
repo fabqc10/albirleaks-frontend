@@ -18,7 +18,8 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
     isSelected,
     onSelect,
 }) => {
-    const { id, jobOwnerInfo, job, lastMessage, lastUpdatedAt } = conversation;
+    // Extraer unreadCount
+    const { id, jobOwnerInfo, job, lastMessage, lastUpdatedAt, unreadCount } = conversation;
 
     // --- Información Principal --- 
     const companyName = job?.companyName ?? 'Empresa no especificada';
@@ -75,17 +76,32 @@ const ConversationListItem: React.FC<ConversationListItemProps> = ({
 
             {/* Contenido Principal (Nombre Empresa, Título Job, Último Mensaje) */}
             <div className="flex-1 min-w-0">
-                {/* Fila Superior: Nombre Empresa y Timestamp */}
+                {/* Fila Superior: Nombre Empresa y Grupo (Timestamp + Badge No Leídos) */}
                 <div className="flex justify-between items-baseline mb-0.5">
-                    <p className="text-sm font-medium text-gray-900 truncate">{companyName}</p>
-                    {lastMessageTimestamp && (
-                        <p className="text-xs text-gray-500 whitespace-nowrap ml-2">{lastMessageTimestamp}</p>
-                    )}
+                    <p className={`text-sm font-medium text-gray-900 truncate ${unreadCount > 0 ? 'font-semibold' : ''}`}>
+                        {companyName}
+                    </p>
+                    {/* Grupo para Timestamp y Badge */}
+                    <div className="flex items-center flex-shrink-0 ml-2">
+                        {lastMessageTimestamp && (
+                            <p className="text-xs text-gray-500 whitespace-nowrap">
+                                {lastMessageTimestamp}
+                            </p>
+                        )}
+                        {/* --- Badge de No Leídos --- */}
+                        {unreadCount > 0 && (
+                            <span className="ml-2 flex items-center justify-center bg-blue-500 text-white text-xs font-semibold rounded-full px-2 py-0.5 min-w-[1.25rem] h-[1.25rem]">
+                                {unreadCount}
+                            </span>
+                        )}
+                    </div>
                 </div>
                 {/* Fila Media: Título del Anuncio */}
-                <p className="text-xs text-gray-700 truncate mb-1">{jobTitle}</p>
+                <p className={`text-xs truncate mb-1 ${unreadCount > 0 ? 'text-gray-800 font-medium' : 'text-gray-700'}`}>
+                    {jobTitle}
+                </p>
                 {/* Fila Inferior: Último Mensaje */}
-                <p className="text-sm text-gray-500 truncate">
+                <p className={`text-sm truncate ${unreadCount > 0 ? 'text-gray-700 font-medium' : 'text-gray-500'}`}>
                     {lastMessageContent}
                 </p>
             </div>
