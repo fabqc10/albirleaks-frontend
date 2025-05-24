@@ -19,9 +19,9 @@ const JobsPage = () => {
   ), [jobs, searchTerm]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black text-white">
+    <div className="min-h-screen bg-gray-50 text-gray-900">
        {/* Efecto de fondo */}
-       <div className="fixed inset-0 bg-[url('/assets/grid.svg')] opacity-[0.05] -z-10" />
+       {/* <div className="fixed inset-0 bg-[url('/assets/grid.svg')] opacity-[0.05] -z-10" /> */}
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Cabecera */}
@@ -31,10 +31,10 @@ const JobsPage = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Encuentra tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Oportunidad</span>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4 text-gray-900">
+            Encuentra tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">Oportunidad</span>
           </h1>
-          <p className="text-lg text-gray-400">Explora los últimos anuncios en El Albir</p>
+          <p className="text-lg text-gray-600">Explora los últimos anuncios en El Albir</p>
         </motion.div>
 
         {/* Barra de Búsqueda */}
@@ -50,7 +50,7 @@ const JobsPage = () => {
               placeholder="Buscar por puesto, empresa, ubicación..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-white/5 border border-white/10 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 backdrop-blur-sm"
+              className="w-full pl-12 pr-4 py-3 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm placeholder-gray-500 text-gray-900"
             />
             <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
           </div>
@@ -64,7 +64,7 @@ const JobsPage = () => {
             animate={{ opacity: 1 }}
             className="text-center py-16 text-gray-500"
           >
-            <FiBriefcase className="w-16 h-16 mx-auto mb-4 opacity-50" />
+            <FiBriefcase className="w-16 h-16 mx-auto mb-4 text-gray-400" />
             <p>No se encontraron anuncios que coincidan con tu búsqueda.</p>
           </motion.div>
         ) : (

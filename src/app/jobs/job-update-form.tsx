@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import { useContext, useEffect } from "react";
 import { JobsContext } from "../contexts/jobs.context";
+import FormButton from "../components/common/form-button";
 import { FiEdit, FiSave, FiXCircle } from "react-icons/fi";
 
 type JobForUpdate = {
@@ -23,7 +24,6 @@ type JobForUpdate = {
   location: string;
   companyName: string;
   createdAt: string;
-  isExpired?: boolean;
 };
 
 type JobUpdateFormProps = {
@@ -50,9 +50,8 @@ const JobUpdateForm = ({ job }: JobUpdateFormProps) => {
   }, [job, reset, isOpen]);
 
   const onSubmit = async (data: JobForUpdate) => {
-    const { jobId: idToUpdate, ...updateData } = data;
     try {
-      await updateJob(idToUpdate, updateData);
+      await updateJob(data.jobId, data);
       onClose();
     } catch (error) {
       console.error("Error updating job:", error);

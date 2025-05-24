@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import { useContext } from "react";
 import { JobsContext } from "../contexts/jobs.context";
+import FormButton from "../components/common/form-button";
 import { FiPlus, FiSave, FiXCircle } from "react-icons/fi";
 
 type JobForPost = {
@@ -58,7 +59,7 @@ const JobCreateForm = () => {
         variant="solid"
         onPress={onOpen}
         startContent={<FiPlus className="w-5 h-5" />}
-        className="shadow-md bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:opacity-90"
+        className="shadow-md"
       >
         Crear Nuevo Anuncio
       </Button>
@@ -70,14 +71,15 @@ const JobCreateForm = () => {
         backdrop="blur"
         size="xl"
         scrollBehavior="inside"
+        className="text-gray-900"
       >
         <ModalContent>
           {(onCloseModal) => (
             <form onSubmit={handleSubmit(onSubmit)}>
-              <ModalHeader className="flex flex-col gap-1 border-b border-white/10">
+              <ModalHeader className="flex flex-col gap-1 border-b border-gray-200">
                 <div className="flex items-center gap-2">
-                   <FiPlus className="w-5 h-5 text-blue-400"/>
-                   <span>Crear Nuevo Anuncio de Empleo</span>
+                   <FiPlus className="w-5 h-5 text-blue-600"/>
+                   <span>Crear Nuevo Anuncio</span>
                 </div>
               </ModalHeader>
               <ModalBody className="py-6 px-6">
@@ -96,7 +98,8 @@ const JobCreateForm = () => {
                     {...register("jobDescription", { required: "Descripción es requerida" })}
                     label="Descripción del Puesto"
                     labelPlacement="outside"
-                    placeholder="Detalla las responsabilidades, requisitos, etc."
+                    maxLength={5000}
+                    placeholder="Detalla las responsabilidades, requisitos, contacto, etc."
                     variant="bordered"
                     minRows={4}
                     isInvalid={!!errors.jobDescription}
@@ -124,7 +127,7 @@ const JobCreateForm = () => {
                   </div>
                 </div>
               </ModalBody>
-              <ModalFooter className="border-t border-white/10">
+              <ModalFooter className="border-t border-gray-200">
                 <Button
                     variant="light"
                     onPress={() => {
@@ -132,6 +135,7 @@ const JobCreateForm = () => {
                         onCloseModal();
                     }}
                     startContent={<FiXCircle />}
+                    className="text-gray-600 hover:text-gray-800"
                  >
                   Cancelar
                 </Button>

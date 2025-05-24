@@ -11,33 +11,33 @@ const StepCard = ({ icon: Icon, title, description, delay }: { icon: React.Eleme
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true, amount: 0.5 }}
     transition={{ duration: 0.6, delay }}
-    className="text-center p-6 bg-white/[0.03] rounded-2xl border border-white/10"
+    className="text-center p-6 bg-white rounded-2xl border border-gray-200 shadow-md"
   >
-    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-500/20 to-purple-500/20 mb-4">
-      <Icon className="w-6 h-6 text-blue-300" />
+    <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-gradient-to-r from-blue-100 to-purple-100 mb-4">
+      <Icon className="w-6 h-6 text-blue-600" />
     </div>
-    <h3 className="text-lg font-semibold text-white mb-2">{title}</h3>
-    <p className="text-sm text-gray-400">{description}</p>
+    <h3 className="text-lg font-semibold text-gray-900 mb-2">{title}</h3>
+    <p className="text-sm text-gray-600">{description}</p>
   </motion.div>
 );
 
 const LandingPage = () => {
   return (
-    <div className="w-full overflow-x-hidden bg-black text-white">
+    <div className="w-full overflow-x-hidden bg-white text-gray-900">
       {/* Hero Section - Layout Asimétrico */}
       <section className="relative min-h-screen flex items-center overflow-hidden">
         {/* Fondo con gradientes y elementos flotantes */}
         <div className="absolute inset-0 -z-10">
-          <div className="absolute inset-0 bg-gradient-to-b from-black via-gray-900/80 to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-white via-gray-50 to-gray-100" />
           <motion.div
-            animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
+            animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
             transition={{ duration: 15, repeat: Infinity, repeatType: 'reverse' }}
-            className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-blue-700/30 rounded-full blur-[150px]"
+            className="absolute top-[-20%] left-[-10%] w-[60vw] h-[60vw] bg-blue-300/30 rounded-full blur-[150px]"
           />
           <motion.div
-            animate={{ scale: [1, 1.05, 1], opacity: [0.4, 0.6, 0.4] }}
+            animate={{ scale: [1, 1.05, 1], opacity: [0.2, 0.4, 0.2] }}
             transition={{ duration: 18, repeat: Infinity, repeatType: 'reverse', delay: 3 }}
-            className="absolute bottom-[-20%] right-[-15%] w-[50vw] h-[50vw] bg-purple-700/30 rounded-full blur-[130px]"
+            className="absolute bottom-[-20%] right-[-15%] w-[50vw] h-[50vw] bg-purple-300/30 rounded-full blur-[130px]"
           />
         </div>
 
@@ -49,33 +49,30 @@ const LandingPage = () => {
             transition={{ duration: 0.8, delay: 0.1 }}
             className="text-center lg:text-left"
           >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight tracking-tight text-gray-900">
               Trabajo y Ayuda
-              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+              <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500">
                 a tu alcance
               </span>
             </h1>
-            <p className="text-xl text-gray-300 mb-10 max-w-xl">
+            <p className="text-xl text-gray-600 mb-10 max-w-xl">
               La forma más rápida y directa de encontrar oportunidades o publicar tus necesidades en El Albir.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Link
                 href="/jobs"
-                className="group relative inline-flex items-center justify-center px-8 py-4 bg-white text-black rounded-full
-                  text-lg font-medium overflow-hidden transition-all duration-300 hover:scale-105 shadow-lg shadow-white/10"
+                className="group relative inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white rounded-full
+                  text-lg font-medium overflow-hidden transition-all duration-300 hover:scale-105 shadow-lg shadow-blue-500/30 hover:bg-blue-700"
               >
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 opacity-0
-                    group-hover:opacity-100 transition-opacity duration-300" />
-                <span className="relative group-hover:text-white transition-colors">
+                <span className="relative">
                   Ver Anuncios
                   <FiArrowRight className="inline-block ml-2 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Link>
-              {/* Botón secundario podría ser para publicar, usar lógica de auth si es necesario */}
               <Link
-                href="/myjobs" // O link a login si no está autenticado
+                href="/myjobs"
                 className="inline-flex items-center justify-center px-8 py-4 rounded-full text-lg
-                  font-medium text-white border border-white/20 hover:bg-white/10 transition-all backdrop-blur-sm"
+                  font-medium text-gray-700 border border-gray-300 hover:bg-gray-100 transition-all"
               >
                 Publicar Ahora
               </Link>
@@ -89,18 +86,17 @@ const LandingPage = () => {
              transition={{ duration: 0.8, delay: 0.3 }}
              className="hidden lg:block relative h-[450px]"
           >
-              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent rounded-3xl border border-white/10 backdrop-blur-xl">
-                  {/* Mock UI sutil */}
-                  <div className="absolute top-8 left-8 w-3/4 h-4 bg-white/10 rounded"></div>
-                  <div className="absolute top-16 left-8 w-1/2 h-3 bg-white/5 rounded"></div>
-                  <div className="absolute bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-white rounded-3xl border border-gray-200 shadow-xl backdrop-blur-none">
+                  <div className="absolute top-8 left-8 w-3/4 h-4 bg-gray-300/50 rounded"></div>
+                  <div className="absolute top-16 left-8 w-1/2 h-3 bg-gray-300/30 rounded"></div>
+                  <div className="absolute bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full opacity-80"></div>
               </div>
           </motion.div>
         </div>
       </section>
 
       {/* How it Works Section */}
-      <section className="py-20 md:py-32 bg-gradient-to-b from-black to-gray-900/70 border-t border-white/5">
+      <section className="py-20 md:py-32 bg-gradient-to-b from-gray-100 to-white border-t border-gray-200">
         <div className="max-w-5xl mx-auto px-6">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -109,8 +105,8 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             className="mb-16 text-center"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Así de Sencillo</h2>
-            <p className="text-lg text-gray-400">Conecta con tu comunidad en 3 simples pasos.</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900">Así de Sencillo</h2>
+            <p className="text-lg text-gray-600">Conecta con tu comunidad en 3 simples pasos.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -137,7 +133,7 @@ const LandingPage = () => {
       </section>
 
       {/* CTA Section Final (Puede ser similar a About o más simple) */}
-      <section className="py-24 bg-black">
+      <section className="py-24 bg-white">
         <div className="max-w-3xl mx-auto px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -146,15 +142,15 @@ const LandingPage = () => {
             transition={{ duration: 0.8 }}
             className="space-y-6"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6 text-gray-900">
               ¿Listo para Conectar?
             </h2>
-            <p className="text-xl text-gray-300 mb-8">
+            <p className="text-xl text-gray-600 mb-8">
               Únete a la red de vecinos de El Albir hoy mismo.
             </p>
             <Link
-              href="/api/auth/signin" // Ajusta la ruta de login
-              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-500 to-purple-500
+              href="/api/auth/signin"
+              className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600
                 text-white rounded-full text-lg font-medium hover:opacity-90 transition-opacity transform hover:scale-105 shadow-lg shadow-blue-500/30"
             >
               Crear Cuenta / Acceder
