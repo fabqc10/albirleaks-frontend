@@ -19,6 +19,7 @@ interface ChatContextType {
     errorConversations: string | null;
     errorMessages: string | null;
     errorSending: string | null;
+    totalUnreadConversations: number;
 
     // Funciones
     fetchConversationsList: () => Promise<void>;
@@ -52,6 +53,11 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
 
     const { data: session, status } = useSession();
     const router = useRouter();
+
+    // Calcular el total de conversaciones no leídas
+    const totalUnreadConversations = useMemo(() => {
+        return conversations.filter(conv => conv.unreadCount > 0).length;
+    }, [conversations]);
 
     // --- API Calls ---
     const internalFetchConversations = useCallback(async (): Promise<ConversationSummaryDto[]> => {
@@ -166,7 +172,14 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     const selectConversation = useCallback((conversationId: number | null) => {
         console.log(`selectConversation called with ID: ${conversationId}`);
         setSelectedConversationId(conversationId);
+
         if (conversationId !== null) {
+            // Actualizar visualmente el contador de no leídos a 0 para esta conversación
+            setConversations(prevConvs =>
+                prevConvs.map(conv =>
+                    conv.id === conversationId ? { ...conv, unreadCount: 0 } : conv
+                )
+            );
             fetchInitialMessages(conversationId);
         } else {
             setCurrentMessages([]);
@@ -285,6 +298,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         errorConversations,
         errorMessages,
         errorSending,
+        totalUnreadConversations,
         fetchConversationsList,
         selectConversation,
         loadMoreMessages,
@@ -294,7 +308,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         conversations, selectedConversationId, currentMessages, isLoadingConversations,
         isLoadingMessages, isSendingMessage, hasMoreMessages, currentPage, errorConversations,
         errorMessages, errorSending,
-        // Asegurarse de que las funciones con nuevas dependencias estén aquí
+        totalUnreadConversations,
         fetchConversationsList, selectConversation, loadMoreMessages, sendMessageToConversation, initiateChat
     ]);
 

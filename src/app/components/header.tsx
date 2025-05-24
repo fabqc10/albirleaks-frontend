@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/app/contexts/auth.context';
+import { useChat } from '@/app/contexts/chat.context';
 import paths from '@/paths';
 // import AlbirLogo from './albirlogo'; // Comenta o elimina la importación antigua
 import NewAlbirLogo from './NewAlbirLogo'; // Importa el nuevo logo SVG
@@ -13,6 +14,7 @@ import { Avatar, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from '@
 
 const Header = () => {
   const { user, loading, login, logout, isAuthenticated } = useAuth();
+  const { totalUnreadConversations } = useChat();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // **DEBUG**: Comprueba qué hay en el objeto user cuando estás logueado
@@ -23,7 +25,11 @@ const Header = () => {
     { href: paths.about(), label: 'Sobre Nosotros' },
     { href: paths.jobs(), label: 'Buscar Empleo' },
     ...(isAuthenticated ? [{ href: paths.myjobs(), label: 'Mis Anuncios' }] : []),
-    ...(isAuthenticated ? [{ href: paths.chat(), label: 'Chat' }] : []),
+    ...(isAuthenticated ? [{ 
+        href: paths.chat(), 
+        label: 'Chat', 
+        badge: totalUnreadConversations > 0 ? totalUnreadConversations : undefined 
+    }] : []),
   ];
 
   return (
@@ -51,6 +57,11 @@ const Header = () => {
                   className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors relative group"
                 >
                   {item.label}
+                  {item.badge && (
+                    <span className="absolute top-[-8px] right-[-12px] inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
                   <span className="absolute bottom-[-4px] left-0 w-full h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300"></span>
                 </Link>
               ))}
@@ -131,6 +142,11 @@ const Header = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {item.label}
+                  {item.badge && (
+                    <span className="ml-2 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
               ))}
 
